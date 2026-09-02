@@ -10,8 +10,9 @@ agent, Telegram, and Hermes are all optional.
   measurements, meals, plans, and activity energy.
 - **Web UI:** lightweight manual actions that are faster to tap than describe,
   plus one place to review progress and confirmed decisions.
-- **Optional structured sources:** for repeatable data such as Apple Health or
-  workout exports.
+- **Optional automations:** for specific repeatable updates, such as Apple
+  Health Active Energy through an iPhone Shortcut or a direct API integration.
+  Open Fitness does not provide a general file-import screen.
 - **Optional owner-selected agent:** for photos, copied summaries, ad-hoc meals,
   corrections, questions, analysis, and owner-confirmed routine-template
   changes through the authenticated API/MCP boundary.
@@ -76,7 +77,8 @@ the Log, and a backup before adding integrations.
 
 Apple Health Active Energy is optional. Follow the generic
 [intraday overwrite and next-day settlement contract](APPLE-HEALTH.md) for an
-iPhone Shortcut. Workout and body-measurement imports remain source-specific.
+iPhone Shortcut. Workout and body-measurement integrations remain
+source-specific.
 
 ## 3. Connect any compatible agent (optional)
 
@@ -165,7 +167,8 @@ compensating write.
 
 - Use the Web UI for quick taps and consolidated review.
 - Use the agent for high-entropy text/images and record-grounded advice.
-- Use structured integrations for repeatable data instead of entering it twice.
+- Use an automation for a supported repeatable update instead of entering it
+  twice.
 - Back up before migrations or upgrades; follow
   [Backup and restore](operations/BACKUP-RESTORE.md).
 - Rotate any legacy owner password shorter than 12 Unicode characters by

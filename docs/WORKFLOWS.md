@@ -12,7 +12,7 @@ flowchart LR
   agent[Owner-selected agent]
   plugin[Open Fitness Agent Plugin]
   web[Mobile-first Web UI]
-  source[Structured source]
+  source[Optional automation<br/>Shortcut or API]
   api[Authenticated Open Fitness API]
   db[(Owner-controlled SQLite)]
 
@@ -26,8 +26,8 @@ flowchart LR
 ```
 
 Use the Web UI when a tap is faster, an agent when the input needs
-interpretation, and a structured source when the same fact can be imported
-reliably. The SQLite database remains the canonical record.
+interpretation, and an automation for a supported repeatable update. The
+SQLite database remains the canonical record.
 
 ## One verified write
 

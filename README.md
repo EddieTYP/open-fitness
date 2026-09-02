@@ -6,9 +6,10 @@ Open Fitness is a private, self-hosted fitness journal. It keeps workouts,
 meals, body measurements, recovery notes, and training plans in one place,
 without asking you to stop using the apps and devices you already rely on.
 
-You can record things directly in the mobile-friendly Web UI, import repeatable
-data, or connect an AI assistant for photos and free-form messages. The
-assistant is optional; the Web UI works on its own.
+You can record things directly in the mobile-friendly Web UI, connect an AI
+assistant for photos and free-form messages, or run an optional automation for
+a specific repeatable update, such as an iPhone Shortcut. The Web UI works on
+its own.
 
 | Today | Nutrition |
 | --- | --- |
@@ -49,7 +50,8 @@ All three input paths update the same SQLite database:
 1. **Web UI** for quick manual entries and everyday review.
 2. **AI assistant (optional)** for photos, natural-language reports,
    corrections, questions, and guidance based on your records.
-3. **Structured imports** for data that arrives in a repeatable format.
+3. **Automations (optional)** for specific repeatable updates, such as an
+   iPhone Shortcut or direct API integration.
 
 When an assistant writes through the bundled plugin, Open Fitness checks the
 request, makes one change, and reads back the saved result before confirming
@@ -81,7 +83,7 @@ After signing in, choose your language, timezone, goal, training cycle, and
 nutrition targets. You can start using the Web UI immediately.
 
 [New owner onboarding](docs/ONBOARDING.md) covers the whole process, including
-optional imports and AI setup.
+optional automations and AI setup.
 
 ## Connect an AI assistant (optional)
 
@@ -109,7 +111,7 @@ not a requirement.
 ## Data and privacy
 
 - Your SQLite database is the source of truth.
-- Web login, AI access, and structured imports use separate credentials.
+- Web login, AI access, and automation/API access use separate credentials.
 - Health records, credentials, databases, exports, and private certificates
   should never be committed to Git.
 - The app listens on loopback. Remote access is left to a private HTTPS proxy or
