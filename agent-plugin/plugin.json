@@ -1,0 +1,18 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "open-fitness",
+  "version": "0.1.0",
+  "description": "Owner-controlled fitness and nutrition records with a portable Agent Skill and local stdio MCP connector.",
+  "author": {
+    "name": "Edward Tsoi"
+  },
+  "homepage": "https://github.com/EddieTYP/open-fitness",
+  "repository": "https://github.com/EddieTYP/open-fitness",
+  "license": "AGPL-3.0-or-later",
+  "keywords": [
+    "fitness",
+    "nutrition",
+    "agent-skill",
+    "mcp"
+  ]
+}

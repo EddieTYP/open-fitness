@@ -1,0 +1,1 @@
+ALTER TABLE `profile` ADD `preferred_locale` text DEFAULT 'zh-HK' NOT NULL;

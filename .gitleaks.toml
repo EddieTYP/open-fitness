@@ -1,0 +1,9 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "HTTP idempotency keys are public request identifiers, not credentials"
+regexTarget = "match"
+regexes = [
+  '''x-idempotency-key["']?\s*[:=]\s*["'][A-Za-z0-9._|:-]+["']''',
+]

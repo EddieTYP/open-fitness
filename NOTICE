@@ -1,0 +1,10 @@
+Open Fitness
+Copyright (C) 2026 Edward Tsoi
+
+Unless otherwise noted, original code, documentation, scripts, workflows, integrations, tests, and first-party UI assets in this repository are licensed under AGPL-3.0-or-later. See LICENSE for the full license text.
+
+Commercial licenses may be available from the copyright holder for organizations that need terms outside the AGPL.
+
+User records and imported user content are not part of the application license. Material expressly identified as third-party or separately licensed retains its original attribution and license terms.
+
+Runtime dependency and embedded-font notices are listed in THIRD_PARTY_NOTICES.md and LICENSES/.

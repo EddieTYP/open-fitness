@@ -1,0 +1,1 @@
+ALTER TABLE `nutrition_meals` ADD `voided_at` text;

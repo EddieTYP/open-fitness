@@ -1,0 +1,4462 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "bbd68dea-3a52-4a52-a32a-d0143cf51ae0",
+  "prevId": "3e213e1a-625d-40b5-b802-41e47e13b459",
+  "tables": {
+    "audit_log": {
+      "name": "audit_log",
+      "columns": {
+        "audit_id": {
+          "name": "audit_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "request_id": {
+          "name": "request_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "actor": {
+          "name": "actor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "operation": {
+          "name": "operation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entity_type": {
+          "name": "entity_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "entity_id": {
+          "name": "entity_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "payload_sha256": {
+          "name": "payload_sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "occurred_at": {
+          "name": "occurred_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "audit_log_request_entity_uq": {
+          "name": "audit_log_request_entity_uq",
+          "columns": [
+            "request_id",
+            "entity_type",
+            "entity_id"
+          ],
+          "isUnique": true
+        },
+        "idx_audit_log_occurred_at": {
+          "name": "idx_audit_log_occurred_at",
+          "columns": [
+            "occurred_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "body_measurements": {
+      "name": "body_measurements",
+      "columns": {
+        "measurement_id": {
+          "name": "measurement_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "measured_at": {
+          "name": "measured_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "local_date": {
+          "name": "local_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_device": {
+          "name": "source_device",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_file": {
+          "name": "source_file",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "weight_kg": {
+          "name": "weight_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "bmi": {
+          "name": "bmi",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "body_fat_pct": {
+          "name": "body_fat_pct",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "visceral_fat_rating": {
+          "name": "visceral_fat_rating",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_mass_kg": {
+          "name": "muscle_mass_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_quality": {
+          "name": "muscle_quality",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "bone_mass_kg": {
+          "name": "bone_mass_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "bmr_kcal_per_day": {
+          "name": "bmr_kcal_per_day",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "metabolic_age_years": {
+          "name": "metabolic_age_years",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "body_water_pct": {
+          "name": "body_water_pct",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "physique_rating": {
+          "name": "physique_rating",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_mass_right_arm_kg": {
+          "name": "muscle_mass_right_arm_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_mass_left_arm_kg": {
+          "name": "muscle_mass_left_arm_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_mass_right_leg_kg": {
+          "name": "muscle_mass_right_leg_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_mass_left_leg_kg": {
+          "name": "muscle_mass_left_leg_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_mass_trunk_kg": {
+          "name": "muscle_mass_trunk_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_quality_right_arm": {
+          "name": "muscle_quality_right_arm",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_quality_left_arm": {
+          "name": "muscle_quality_left_arm",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_quality_right_leg": {
+          "name": "muscle_quality_right_leg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_quality_left_leg": {
+          "name": "muscle_quality_left_leg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "muscle_quality_trunk": {
+          "name": "muscle_quality_trunk",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "body_fat_right_arm_pct": {
+          "name": "body_fat_right_arm_pct",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "body_fat_left_arm_pct": {
+          "name": "body_fat_left_arm_pct",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "body_fat_right_leg_pct": {
+          "name": "body_fat_right_leg_pct",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "body_fat_left_leg_pct": {
+          "name": "body_fat_left_leg_pct",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "body_fat_trunk_pct": {
+          "name": "body_fat_trunk_pct",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "heart_rate_bpm": {
+          "name": "heart_rate_bpm",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fat_mass_kg": {
+          "name": "fat_mass_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "estimated_fat_free_mass_kg": {
+          "name": "estimated_fat_free_mass_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "body_measurements_measured_at_uq": {
+          "name": "body_measurements_measured_at_uq",
+          "columns": [
+            "measured_at"
+          ],
+          "isUnique": true
+        },
+        "idx_body_measurements_measured_at": {
+          "name": "idx_body_measurements_measured_at",
+          "columns": [
+            "measured_at"
+          ],
+          "isUnique": false
+        },
+        "idx_body_measurements_local_date": {
+          "name": "idx_body_measurements_local_date",
+          "columns": [
+            "local_date",
+            "measured_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "body_measurements_weight_positive": {
+          "name": "body_measurements_weight_positive",
+          "value": "\"body_measurements\".\"weight_kg\" > 0"
+        },
+        "body_measurements_body_fat_range": {
+          "name": "body_measurements_body_fat_range",
+          "value": "\"body_measurements\".\"body_fat_pct\" IS NULL OR (\"body_measurements\".\"body_fat_pct\" >= 0 AND \"body_measurements\".\"body_fat_pct\" <= 100)"
+        },
+        "body_measurements_water_range": {
+          "name": "body_measurements_water_range",
+          "value": "\"body_measurements\".\"body_water_pct\" IS NULL OR (\"body_measurements\".\"body_water_pct\" >= 0 AND \"body_measurements\".\"body_water_pct\" <= 100)"
+        }
+      }
+    },
+    "corrections": {
+      "name": "corrections",
+      "columns": {
+        "correction_id": {
+          "name": "correction_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "effective_date": {
+          "name": "effective_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "target_scope": {
+          "name": "target_scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "target_key": {
+          "name": "target_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "field_name": {
+          "name": "field_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "original_value": {
+          "name": "original_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "corrected_value": {
+          "name": "corrected_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recorded_at": {
+          "name": "recorded_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "corrections_natural_key_uq": {
+          "name": "corrections_natural_key_uq",
+          "columns": [
+            "target_scope",
+            "target_key",
+            "field_name",
+            "recorded_at"
+          ],
+          "isUnique": true
+        },
+        "idx_corrections_target": {
+          "name": "idx_corrections_target",
+          "columns": [
+            "target_scope",
+            "target_key",
+            "field_name"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "data_policies": {
+      "name": "data_policies",
+      "columns": {
+        "policy_key": {
+          "name": "policy_key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "policy_value": {
+          "name": "policy_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "rationale": {
+          "name": "rationale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "recorded_at": {
+          "name": "recorded_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "decision_rules": {
+      "name": "decision_rules",
+      "columns": {
+        "rule_id": {
+          "name": "rule_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "domain": {
+          "name": "domain",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "operational_rule": {
+          "name": "operational_rule",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "evidence_id": {
+          "name": "evidence_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "strength_or_status": {
+          "name": "strength_or_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "personalisation_note": {
+          "name": "personalisation_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "decision_rules_evidence_id_evidence_base_evidence_id_fk": {
+          "name": "decision_rules_evidence_id_evidence_base_evidence_id_fk",
+          "tableFrom": "decision_rules",
+          "tableTo": "evidence_base",
+          "columnsFrom": [
+            "evidence_id"
+          ],
+          "columnsTo": [
+            "evidence_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "evidence_base": {
+      "name": "evidence_base",
+      "columns": {
+        "evidence_id": {
+          "name": "evidence_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_type": {
+          "name": "source_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "publication_year": {
+          "name": "publication_year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "authority": {
+          "name": "authority",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "intended_use": {
+          "name": "intended_use",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "authority_tier": {
+          "name": "authority_tier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status_at_recorded_date": {
+          "name": "status_at_recorded_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "exercise_aliases": {
+      "name": "exercise_aliases",
+      "columns": {
+        "source_exercise_name": {
+          "name": "source_exercise_name",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "canonical_name": {
+          "name": "canonical_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "primary_muscle_groups": {
+          "name": "primary_muscle_groups",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "load_basis": {
+          "name": "load_basis",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "comparison_scope": {
+          "name": "comparison_scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "import_log": {
+      "name": "import_log",
+      "columns": {
+        "import_id": {
+          "name": "import_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "imported_at": {
+          "name": "imported_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "data_max_timestamp": {
+          "name": "data_max_timestamp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_rows_or_records": {
+          "name": "source_rows_or_records",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "normalised_sessions": {
+          "name": "normalised_sessions",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "normalised_sets": {
+          "name": "normalised_sets",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sha256": {
+          "name": "sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "import_log_sha256_uq": {
+          "name": "import_log_sha256_uq",
+          "columns": [
+            "sha256"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "nutrition_combo_items": {
+      "name": "nutrition_combo_items",
+      "columns": {
+        "combo_item_id": {
+          "name": "combo_item_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "combo_version_id": {
+          "name": "combo_version_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "item_ordinal": {
+          "name": "item_ordinal",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food_id": {
+          "name": "food_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food_version_id_at_save": {
+          "name": "food_version_id_at_save",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "default_quantity": {
+          "name": "default_quantity",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "unit_snapshot": {
+          "name": "unit_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_combo_items_version_ordinal_uq": {
+          "name": "nutrition_combo_items_version_ordinal_uq",
+          "columns": [
+            "combo_version_id",
+            "item_ordinal"
+          ],
+          "isUnique": true
+        },
+        "nutrition_combo_items_version_food_uq": {
+          "name": "nutrition_combo_items_version_food_uq",
+          "columns": [
+            "combo_version_id",
+            "food_id"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_combo_items_version": {
+          "name": "idx_nutrition_combo_items_version",
+          "columns": [
+            "combo_version_id",
+            "item_ordinal"
+          ],
+          "isUnique": false
+        },
+        "idx_nutrition_combo_items_food": {
+          "name": "idx_nutrition_combo_items_food",
+          "columns": [
+            "food_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_combo_items_combo_version_id_nutrition_combo_versions_combo_version_id_fk": {
+          "name": "nutrition_combo_items_combo_version_id_nutrition_combo_versions_combo_version_id_fk",
+          "tableFrom": "nutrition_combo_items",
+          "tableTo": "nutrition_combo_versions",
+          "columnsFrom": [
+            "combo_version_id"
+          ],
+          "columnsTo": [
+            "combo_version_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "nutrition_combo_items_food_id_nutrition_foods_food_id_fk": {
+          "name": "nutrition_combo_items_food_id_nutrition_foods_food_id_fk",
+          "tableFrom": "nutrition_combo_items",
+          "tableTo": "nutrition_foods",
+          "columnsFrom": [
+            "food_id"
+          ],
+          "columnsTo": [
+            "food_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "nutrition_combo_items_food_version_id_at_save_nutrition_food_versions_food_version_id_fk": {
+          "name": "nutrition_combo_items_food_version_id_at_save_nutrition_food_versions_food_version_id_fk",
+          "tableFrom": "nutrition_combo_items",
+          "tableTo": "nutrition_food_versions",
+          "columnsFrom": [
+            "food_version_id_at_save"
+          ],
+          "columnsTo": [
+            "food_version_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_combo_items_ordinal_positive": {
+          "name": "nutrition_combo_items_ordinal_positive",
+          "value": "\"nutrition_combo_items\".\"item_ordinal\" > 0"
+        },
+        "nutrition_combo_items_quantity_positive": {
+          "name": "nutrition_combo_items_quantity_positive",
+          "value": "\"nutrition_combo_items\".\"default_quantity\" > 0"
+        }
+      }
+    },
+    "nutrition_combo_versions": {
+      "name": "nutrition_combo_versions",
+      "columns": {
+        "combo_version_id": {
+          "name": "combo_version_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "combo_id": {
+          "name": "combo_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version_no": {
+          "name": "version_no",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "display_name_snapshot": {
+          "name": "display_name_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "default_meal_type": {
+          "name": "default_meal_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "context_tag": {
+          "name": "context_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "revision_reason": {
+          "name": "revision_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_combo_versions_combo_version_uq": {
+          "name": "nutrition_combo_versions_combo_version_uq",
+          "columns": [
+            "combo_id",
+            "version_no"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_combo_versions_combo": {
+          "name": "idx_nutrition_combo_versions_combo",
+          "columns": [
+            "combo_id",
+            "version_no"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_combo_versions_combo_id_nutrition_combos_combo_id_fk": {
+          "name": "nutrition_combo_versions_combo_id_nutrition_combos_combo_id_fk",
+          "tableFrom": "nutrition_combo_versions",
+          "tableTo": "nutrition_combos",
+          "columnsFrom": [
+            "combo_id"
+          ],
+          "columnsTo": [
+            "combo_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_combo_versions_version_positive": {
+          "name": "nutrition_combo_versions_version_positive",
+          "value": "\"nutrition_combo_versions\".\"version_no\" > 0"
+        },
+        "nutrition_combo_versions_meal_type_allowed": {
+          "name": "nutrition_combo_versions_meal_type_allowed",
+          "value": "\"nutrition_combo_versions\".\"default_meal_type\" IS NULL OR \"nutrition_combo_versions\".\"default_meal_type\" IN ('breakfast', 'lunch', 'dinner', 'snack', 'late_night', 'other')"
+        },
+        "nutrition_combo_versions_context_allowed": {
+          "name": "nutrition_combo_versions_context_allowed",
+          "value": "\"nutrition_combo_versions\".\"context_tag\" IS NULL OR \"nutrition_combo_versions\".\"context_tag\" IN ('post_workout')"
+        }
+      }
+    },
+    "nutrition_combos": {
+      "name": "nutrition_combos",
+      "columns": {
+        "combo_id": {
+          "name": "combo_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "normalized_name": {
+          "name": "normalized_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "current_version_no": {
+          "name": "current_version_no",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_combos_normalized_name_uq": {
+          "name": "nutrition_combos_normalized_name_uq",
+          "columns": [
+            "normalized_name"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_combos_active_name": {
+          "name": "idx_nutrition_combos_active_name",
+          "columns": [
+            "is_active",
+            "display_name"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_combos_active_boolean": {
+          "name": "nutrition_combos_active_boolean",
+          "value": "\"nutrition_combos\".\"is_active\" IN (0, 1)"
+        },
+        "nutrition_combos_version_positive": {
+          "name": "nutrition_combos_version_positive",
+          "value": "\"nutrition_combos\".\"current_version_no\" > 0"
+        }
+      }
+    },
+    "nutrition_energy_observations": {
+      "name": "nutrition_energy_observations",
+      "columns": {
+        "energy_observation_id": {
+          "name": "energy_observation_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "local_date": {
+          "name": "local_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "observed_at": {
+          "name": "observed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "active_energy_kcal": {
+          "name": "active_energy_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "basal_energy_kcal": {
+          "name": "basal_energy_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_nutrition_energy_date_observed": {
+          "name": "idx_nutrition_energy_date_observed",
+          "columns": [
+            "local_date",
+            "observed_at",
+            "created_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_energy_active_nonnegative": {
+          "name": "nutrition_energy_active_nonnegative",
+          "value": "\"nutrition_energy_observations\".\"active_energy_kcal\" >= 0"
+        },
+        "nutrition_energy_basal_nonnegative": {
+          "name": "nutrition_energy_basal_nonnegative",
+          "value": "\"nutrition_energy_observations\".\"basal_energy_kcal\" IS NULL OR \"nutrition_energy_observations\".\"basal_energy_kcal\" >= 0"
+        },
+        "nutrition_energy_status_allowed": {
+          "name": "nutrition_energy_status_allowed",
+          "value": "\"nutrition_energy_observations\".\"status\" IN ('provisional', 'final')"
+        }
+      }
+    },
+    "nutrition_food_aliases": {
+      "name": "nutrition_food_aliases",
+      "columns": {
+        "alias_id": {
+          "name": "alias_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food_id": {
+          "name": "food_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "alias": {
+          "name": "alias",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "normalized_alias": {
+          "name": "normalized_alias",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_food_aliases_normalized_uq": {
+          "name": "nutrition_food_aliases_normalized_uq",
+          "columns": [
+            "normalized_alias"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_food_aliases_food": {
+          "name": "idx_nutrition_food_aliases_food",
+          "columns": [
+            "food_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_food_aliases_food_id_nutrition_foods_food_id_fk": {
+          "name": "nutrition_food_aliases_food_id_nutrition_foods_food_id_fk",
+          "tableFrom": "nutrition_food_aliases",
+          "tableTo": "nutrition_foods",
+          "columnsFrom": [
+            "food_id"
+          ],
+          "columnsTo": [
+            "food_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "nutrition_food_versions": {
+      "name": "nutrition_food_versions",
+      "columns": {
+        "food_version_id": {
+          "name": "food_version_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food_id": {
+          "name": "food_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version_no": {
+          "name": "version_no",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "base_quantity": {
+          "name": "base_quantity",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "base_unit": {
+          "name": "base_unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "energy_kcal": {
+          "name": "energy_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "protein_g": {
+          "name": "protein_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_fat_g": {
+          "name": "total_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "saturated_fat_g": {
+          "name": "saturated_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "trans_fat_g": {
+          "name": "trans_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "carbs_g": {
+          "name": "carbs_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sugar_g": {
+          "name": "sugar_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fibre_g": {
+          "name": "fibre_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sodium_mg": {
+          "name": "sodium_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cholesterol_mg": {
+          "name": "cholesterol_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_note": {
+          "name": "source_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "effective_from": {
+          "name": "effective_from",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_food_versions_food_version_uq": {
+          "name": "nutrition_food_versions_food_version_uq",
+          "columns": [
+            "food_id",
+            "version_no"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_food_versions_food": {
+          "name": "idx_nutrition_food_versions_food",
+          "columns": [
+            "food_id",
+            "version_no"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_food_versions_food_id_nutrition_foods_food_id_fk": {
+          "name": "nutrition_food_versions_food_id_nutrition_foods_food_id_fk",
+          "tableFrom": "nutrition_food_versions",
+          "tableTo": "nutrition_foods",
+          "columnsFrom": [
+            "food_id"
+          ],
+          "columnsTo": [
+            "food_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_food_versions_version_positive": {
+          "name": "nutrition_food_versions_version_positive",
+          "value": "\"nutrition_food_versions\".\"version_no\" > 0"
+        },
+        "nutrition_food_versions_base_quantity_positive": {
+          "name": "nutrition_food_versions_base_quantity_positive",
+          "value": "\"nutrition_food_versions\".\"base_quantity\" > 0"
+        }
+      }
+    },
+    "nutrition_foods": {
+      "name": "nutrition_foods",
+      "columns": {
+        "food_id": {
+          "name": "food_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "normalized_name": {
+          "name": "normalized_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "brand": {
+          "name": "brand",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "default_unit": {
+          "name": "default_unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "original_label": {
+          "name": "original_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "current_version_no": {
+          "name": "current_version_no",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_foods_normalized_name_uq": {
+          "name": "nutrition_foods_normalized_name_uq",
+          "columns": [
+            "normalized_name"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_foods_active_name": {
+          "name": "idx_nutrition_foods_active_name",
+          "columns": [
+            "is_active",
+            "display_name"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_foods_active_boolean": {
+          "name": "nutrition_foods_active_boolean",
+          "value": "\"nutrition_foods\".\"is_active\" IN (0, 1)"
+        },
+        "nutrition_foods_version_positive": {
+          "name": "nutrition_foods_version_positive",
+          "value": "\"nutrition_foods\".\"current_version_no\" > 0"
+        }
+      }
+    },
+    "nutrition_import_log": {
+      "name": "nutrition_import_log",
+      "columns": {
+        "import_id": {
+          "name": "import_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "file_name": {
+          "name": "file_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sha256": {
+          "name": "sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "imported_at": {
+          "name": "imported_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food_count": {
+          "name": "food_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "meal_count": {
+          "name": "meal_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "meal_item_count": {
+          "name": "meal_item_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "adjustment_count": {
+          "name": "adjustment_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "energy_observation_count": {
+          "name": "energy_observation_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "nutrition_import_log_sha256_uq": {
+          "name": "nutrition_import_log_sha256_uq",
+          "columns": [
+            "sha256"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "nutrition_meal_combo_sources": {
+      "name": "nutrition_meal_combo_sources",
+      "columns": {
+        "meal_revision_id": {
+          "name": "meal_revision_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "combo_version_id": {
+          "name": "combo_version_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_nutrition_meal_combo_sources_combo": {
+          "name": "idx_nutrition_meal_combo_sources_combo",
+          "columns": [
+            "combo_version_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_meal_combo_sources_meal_revision_id_nutrition_meal_revisions_meal_revision_id_fk": {
+          "name": "nutrition_meal_combo_sources_meal_revision_id_nutrition_meal_revisions_meal_revision_id_fk",
+          "tableFrom": "nutrition_meal_combo_sources",
+          "tableTo": "nutrition_meal_revisions",
+          "columnsFrom": [
+            "meal_revision_id"
+          ],
+          "columnsTo": [
+            "meal_revision_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "nutrition_meal_combo_sources_combo_version_id_nutrition_combo_versions_combo_version_id_fk": {
+          "name": "nutrition_meal_combo_sources_combo_version_id_nutrition_combo_versions_combo_version_id_fk",
+          "tableFrom": "nutrition_meal_combo_sources",
+          "tableTo": "nutrition_combo_versions",
+          "columnsFrom": [
+            "combo_version_id"
+          ],
+          "columnsTo": [
+            "combo_version_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "nutrition_meal_items": {
+      "name": "nutrition_meal_items",
+      "columns": {
+        "meal_item_id": {
+          "name": "meal_item_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "meal_revision_id": {
+          "name": "meal_revision_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "item_ordinal": {
+          "name": "item_ordinal",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food_id": {
+          "name": "food_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "food_version_id": {
+          "name": "food_version_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "item_name_snapshot": {
+          "name": "item_name_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "unit": {
+          "name": "unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "energy_kcal": {
+          "name": "energy_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "protein_g": {
+          "name": "protein_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_fat_g": {
+          "name": "total_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "saturated_fat_g": {
+          "name": "saturated_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "trans_fat_g": {
+          "name": "trans_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "carbs_g": {
+          "name": "carbs_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sugar_g": {
+          "name": "sugar_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fibre_g": {
+          "name": "fibre_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sodium_mg": {
+          "name": "sodium_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cholesterol_mg": {
+          "name": "cholesterol_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "assumption": {
+          "name": "assumption",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_row": {
+          "name": "source_row",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "data_quality_flags": {
+          "name": "data_quality_flags",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_meal_items_revision_ordinal_uq": {
+          "name": "nutrition_meal_items_revision_ordinal_uq",
+          "columns": [
+            "meal_revision_id",
+            "item_ordinal"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_meal_items_revision": {
+          "name": "idx_nutrition_meal_items_revision",
+          "columns": [
+            "meal_revision_id",
+            "item_ordinal"
+          ],
+          "isUnique": false
+        },
+        "idx_nutrition_meal_items_food": {
+          "name": "idx_nutrition_meal_items_food",
+          "columns": [
+            "food_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_meal_items_meal_revision_id_nutrition_meal_revisions_meal_revision_id_fk": {
+          "name": "nutrition_meal_items_meal_revision_id_nutrition_meal_revisions_meal_revision_id_fk",
+          "tableFrom": "nutrition_meal_items",
+          "tableTo": "nutrition_meal_revisions",
+          "columnsFrom": [
+            "meal_revision_id"
+          ],
+          "columnsTo": [
+            "meal_revision_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "nutrition_meal_items_food_id_nutrition_foods_food_id_fk": {
+          "name": "nutrition_meal_items_food_id_nutrition_foods_food_id_fk",
+          "tableFrom": "nutrition_meal_items",
+          "tableTo": "nutrition_foods",
+          "columnsFrom": [
+            "food_id"
+          ],
+          "columnsTo": [
+            "food_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "nutrition_meal_items_food_version_id_nutrition_food_versions_food_version_id_fk": {
+          "name": "nutrition_meal_items_food_version_id_nutrition_food_versions_food_version_id_fk",
+          "tableFrom": "nutrition_meal_items",
+          "tableTo": "nutrition_food_versions",
+          "columnsFrom": [
+            "food_version_id"
+          ],
+          "columnsTo": [
+            "food_version_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_meal_items_ordinal_positive": {
+          "name": "nutrition_meal_items_ordinal_positive",
+          "value": "\"nutrition_meal_items\".\"item_ordinal\" > 0"
+        },
+        "nutrition_meal_items_confidence_allowed": {
+          "name": "nutrition_meal_items_confidence_allowed",
+          "value": "\"nutrition_meal_items\".\"confidence\" IN ('high', 'medium', 'low')"
+        }
+      }
+    },
+    "nutrition_meal_plan_items": {
+      "name": "nutrition_meal_plan_items",
+      "columns": {
+        "plan_item_id": {
+          "name": "plan_item_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "plan_id": {
+          "name": "plan_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "item_ordinal": {
+          "name": "item_ordinal",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "food_id": {
+          "name": "food_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "food_version_id": {
+          "name": "food_version_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "item_name_snapshot": {
+          "name": "item_name_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "unit": {
+          "name": "unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "energy_kcal": {
+          "name": "energy_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "protein_g": {
+          "name": "protein_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_fat_g": {
+          "name": "total_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "saturated_fat_g": {
+          "name": "saturated_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "trans_fat_g": {
+          "name": "trans_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "carbs_g": {
+          "name": "carbs_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sugar_g": {
+          "name": "sugar_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fibre_g": {
+          "name": "fibre_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sodium_mg": {
+          "name": "sodium_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cholesterol_mg": {
+          "name": "cholesterol_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "assumption": {
+          "name": "assumption",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "data_quality_flags": {
+          "name": "data_quality_flags",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_meal_plan_items_plan_ordinal_uq": {
+          "name": "nutrition_meal_plan_items_plan_ordinal_uq",
+          "columns": [
+            "plan_id",
+            "item_ordinal"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_meal_plan_items_plan": {
+          "name": "idx_nutrition_meal_plan_items_plan",
+          "columns": [
+            "plan_id",
+            "item_ordinal"
+          ],
+          "isUnique": false
+        },
+        "idx_nutrition_meal_plan_items_food": {
+          "name": "idx_nutrition_meal_plan_items_food",
+          "columns": [
+            "food_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_meal_plan_items_plan_id_nutrition_meal_plans_plan_id_fk": {
+          "name": "nutrition_meal_plan_items_plan_id_nutrition_meal_plans_plan_id_fk",
+          "tableFrom": "nutrition_meal_plan_items",
+          "tableTo": "nutrition_meal_plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "plan_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "nutrition_meal_plan_items_food_id_nutrition_foods_food_id_fk": {
+          "name": "nutrition_meal_plan_items_food_id_nutrition_foods_food_id_fk",
+          "tableFrom": "nutrition_meal_plan_items",
+          "tableTo": "nutrition_foods",
+          "columnsFrom": [
+            "food_id"
+          ],
+          "columnsTo": [
+            "food_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "nutrition_meal_plan_items_food_version_id_nutrition_food_versions_food_version_id_fk": {
+          "name": "nutrition_meal_plan_items_food_version_id_nutrition_food_versions_food_version_id_fk",
+          "tableFrom": "nutrition_meal_plan_items",
+          "tableTo": "nutrition_food_versions",
+          "columnsFrom": [
+            "food_version_id"
+          ],
+          "columnsTo": [
+            "food_version_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_meal_plan_items_ordinal_positive": {
+          "name": "nutrition_meal_plan_items_ordinal_positive",
+          "value": "\"nutrition_meal_plan_items\".\"item_ordinal\" > 0"
+        },
+        "nutrition_meal_plan_items_quantity_positive": {
+          "name": "nutrition_meal_plan_items_quantity_positive",
+          "value": "\"nutrition_meal_plan_items\".\"quantity\" > 0"
+        },
+        "nutrition_meal_plan_items_confidence_allowed": {
+          "name": "nutrition_meal_plan_items_confidence_allowed",
+          "value": "\"nutrition_meal_plan_items\".\"confidence\" IN ('high', 'medium', 'low')"
+        }
+      }
+    },
+    "nutrition_meal_plans": {
+      "name": "nutrition_meal_plans",
+      "columns": {
+        "plan_id": {
+          "name": "plan_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "scheduled_date": {
+          "name": "scheduled_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "meal_type": {
+          "name": "meal_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "context_tag": {
+          "name": "context_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "original_meal_type": {
+          "name": "original_meal_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "original_text": {
+          "name": "original_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'pending'"
+        },
+        "current_version_no": {
+          "name": "current_version_no",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "completed_meal_id": {
+          "name": "completed_meal_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "consumed_at": {
+          "name": "consumed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cancelled_at": {
+          "name": "cancelled_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_nutrition_meal_plans_status_date": {
+          "name": "idx_nutrition_meal_plans_status_date",
+          "columns": [
+            "status",
+            "scheduled_date",
+            "created_at"
+          ],
+          "isUnique": false
+        },
+        "idx_nutrition_meal_plans_completed_meal": {
+          "name": "idx_nutrition_meal_plans_completed_meal",
+          "columns": [
+            "completed_meal_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_meal_plans_completed_meal_id_nutrition_meals_meal_id_fk": {
+          "name": "nutrition_meal_plans_completed_meal_id_nutrition_meals_meal_id_fk",
+          "tableFrom": "nutrition_meal_plans",
+          "tableTo": "nutrition_meals",
+          "columnsFrom": [
+            "completed_meal_id"
+          ],
+          "columnsTo": [
+            "meal_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_meal_plans_type_allowed": {
+          "name": "nutrition_meal_plans_type_allowed",
+          "value": "\"nutrition_meal_plans\".\"meal_type\" IN ('breakfast', 'lunch', 'dinner', 'snack', 'late_night', 'other')"
+        },
+        "nutrition_meal_plans_context_allowed": {
+          "name": "nutrition_meal_plans_context_allowed",
+          "value": "\"nutrition_meal_plans\".\"context_tag\" IS NULL OR \"nutrition_meal_plans\".\"context_tag\" IN ('post_workout')"
+        },
+        "nutrition_meal_plans_confidence_allowed": {
+          "name": "nutrition_meal_plans_confidence_allowed",
+          "value": "\"nutrition_meal_plans\".\"confidence\" IN ('high', 'medium', 'low')"
+        },
+        "nutrition_meal_plans_status_allowed": {
+          "name": "nutrition_meal_plans_status_allowed",
+          "value": "\"nutrition_meal_plans\".\"status\" IN ('pending', 'consumed', 'cancelled')"
+        },
+        "nutrition_meal_plans_version_positive": {
+          "name": "nutrition_meal_plans_version_positive",
+          "value": "\"nutrition_meal_plans\".\"current_version_no\" > 0"
+        }
+      }
+    },
+    "nutrition_meal_revisions": {
+      "name": "nutrition_meal_revisions",
+      "columns": {
+        "meal_revision_id": {
+          "name": "meal_revision_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "meal_id": {
+          "name": "meal_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "revision_no": {
+          "name": "revision_no",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "revision_reason": {
+          "name": "revision_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "original_text": {
+          "name": "original_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "energy_kcal": {
+          "name": "energy_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "protein_g": {
+          "name": "protein_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_fat_g": {
+          "name": "total_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "saturated_fat_g": {
+          "name": "saturated_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "trans_fat_g": {
+          "name": "trans_fat_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "carbs_g": {
+          "name": "carbs_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sugar_g": {
+          "name": "sugar_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fibre_g": {
+          "name": "fibre_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sodium_mg": {
+          "name": "sodium_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "cholesterol_mg": {
+          "name": "cholesterol_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "nutrition_meal_revisions_meal_revision_uq": {
+          "name": "nutrition_meal_revisions_meal_revision_uq",
+          "columns": [
+            "meal_id",
+            "revision_no"
+          ],
+          "isUnique": true
+        },
+        "idx_nutrition_meal_revisions_meal": {
+          "name": "idx_nutrition_meal_revisions_meal",
+          "columns": [
+            "meal_id",
+            "revision_no"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "nutrition_meal_revisions_meal_id_nutrition_meals_meal_id_fk": {
+          "name": "nutrition_meal_revisions_meal_id_nutrition_meals_meal_id_fk",
+          "tableFrom": "nutrition_meal_revisions",
+          "tableTo": "nutrition_meals",
+          "columnsFrom": [
+            "meal_id"
+          ],
+          "columnsTo": [
+            "meal_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_meal_revisions_revision_positive": {
+          "name": "nutrition_meal_revisions_revision_positive",
+          "value": "\"nutrition_meal_revisions\".\"revision_no\" > 0"
+        }
+      }
+    },
+    "nutrition_meals": {
+      "name": "nutrition_meals",
+      "columns": {
+        "meal_id": {
+          "name": "meal_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "local_date": {
+          "name": "local_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "eaten_at": {
+          "name": "eaten_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "time_precision": {
+          "name": "time_precision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'date_only'"
+        },
+        "meal_type": {
+          "name": "meal_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "context_tag": {
+          "name": "context_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "original_meal_type": {
+          "name": "original_meal_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "current_revision_no": {
+          "name": "current_revision_no",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "voided_at": {
+          "name": "voided_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_nutrition_meals_local_date": {
+          "name": "idx_nutrition_meals_local_date",
+          "columns": [
+            "local_date",
+            "meal_type"
+          ],
+          "isUnique": false
+        },
+        "idx_nutrition_meals_eaten_at": {
+          "name": "idx_nutrition_meals_eaten_at",
+          "columns": [
+            "eaten_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_meals_type_allowed": {
+          "name": "nutrition_meals_type_allowed",
+          "value": "\"nutrition_meals\".\"meal_type\" IN ('breakfast', 'lunch', 'dinner', 'snack', 'late_night', 'other')"
+        },
+        "nutrition_meals_time_precision_allowed": {
+          "name": "nutrition_meals_time_precision_allowed",
+          "value": "\"nutrition_meals\".\"time_precision\" IN ('exact', 'inferred', 'date_only')"
+        },
+        "nutrition_meals_confidence_allowed": {
+          "name": "nutrition_meals_confidence_allowed",
+          "value": "\"nutrition_meals\".\"confidence\" IN ('high', 'medium', 'low')"
+        },
+        "nutrition_meals_revision_positive": {
+          "name": "nutrition_meals_revision_positive",
+          "value": "\"nutrition_meals\".\"current_revision_no\" > 0"
+        }
+      }
+    },
+    "nutrition_settings": {
+      "name": "nutrition_settings",
+      "columns": {
+        "settings_id": {
+          "name": "settings_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "effective_from": {
+          "name": "effective_from",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "calorie_target_kcal": {
+          "name": "calorie_target_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "daily_deficit_kcal": {
+          "name": "daily_deficit_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "active_energy_credit_rate": {
+          "name": "active_energy_credit_rate",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0.8
+        },
+        "protein_target_g": {
+          "name": "protein_target_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "saturated_fat_limit_g": {
+          "name": "saturated_fat_limit_g",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sodium_limit_mg": {
+          "name": "sodium_limit_mg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_note": {
+          "name": "source_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_nutrition_settings_effective": {
+          "name": "idx_nutrition_settings_effective",
+          "columns": [
+            "effective_from"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "nutrition_settings_status_allowed": {
+          "name": "nutrition_settings_status_allowed",
+          "value": "\"nutrition_settings\".\"status\" IN ('provisional', 'active', 'retired')"
+        },
+        "nutrition_settings_deficit_nonnegative": {
+          "name": "nutrition_settings_deficit_nonnegative",
+          "value": "\"nutrition_settings\".\"daily_deficit_kcal\" >= 0"
+        },
+        "nutrition_settings_credit_rate_range": {
+          "name": "nutrition_settings_credit_rate_range",
+          "value": "\"nutrition_settings\".\"active_energy_credit_rate\" >= 0 AND \"nutrition_settings\".\"active_energy_credit_rate\" <= 1"
+        },
+        "nutrition_settings_protein_positive": {
+          "name": "nutrition_settings_protein_positive",
+          "value": "\"nutrition_settings\".\"protein_target_g\" > 0"
+        }
+      }
+    },
+    "operating_constraints": {
+      "name": "operating_constraints",
+      "columns": {
+        "constraint_id": {
+          "name": "constraint_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "item": {
+          "name": "item",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "operating_rule": {
+          "name": "operating_rule",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "effective_date": {
+          "name": "effective_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "operating_constraints_item_unique": {
+          "name": "operating_constraints_item_unique",
+          "columns": [
+            "item"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "profile": {
+      "name": "profile",
+      "columns": {
+        "profile_id": {
+          "name": "profile_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "primary_goal": {
+          "name": "primary_goal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "goal_type": {
+          "name": "goal_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "training_cycle": {
+          "name": "training_cycle",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "training_cycle_config": {
+          "name": "training_cycle_config",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "strength_progress_exercise": {
+          "name": "strength_progress_exercise",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "height_cm": {
+          "name": "height_cm",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'Asia/Hong_Kong'"
+        },
+        "preferred_locale": {
+          "name": "preferred_locale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'en'"
+        },
+        "owner_email": {
+          "name": "owner_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "setup_completed": {
+          "name": "setup_completed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "schema_metadata": {
+      "name": "schema_metadata",
+      "columns": {
+        "schema_version": {
+          "name": "schema_version",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "database_name": {
+          "name": "database_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "canonical_master": {
+          "name": "canonical_master",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'Asia/Hong_Kong'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "source_workbook_sha256": {
+          "name": "source_workbook_sha256",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "''"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "schema_metadata_canonical_master_boolean": {
+          "name": "schema_metadata_canonical_master_boolean",
+          "value": "\"schema_metadata\".\"canonical_master\" IN (0, 1)"
+        }
+      }
+    },
+    "session_notes": {
+      "name": "session_notes",
+      "columns": {
+        "note_id": {
+          "name": "note_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "note_date": {
+          "name": "note_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "session_id": {
+          "name": "session_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "venue": {
+          "name": "venue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "exercise_or_area": {
+          "name": "exercise_or_area",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "note_type": {
+          "name": "note_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "pain_0_10": {
+          "name": "pain_0_10",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_session_notes_date": {
+          "name": "idx_session_notes_date",
+          "columns": [
+            "note_date"
+          ],
+          "isUnique": false
+        },
+        "idx_session_notes_session": {
+          "name": "idx_session_notes_session",
+          "columns": [
+            "session_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "session_notes_session_id_workout_sessions_session_id_fk": {
+          "name": "session_notes_session_id_workout_sessions_session_id_fk",
+          "tableFrom": "session_notes",
+          "tableTo": "workout_sessions",
+          "columnsFrom": [
+            "session_id"
+          ],
+          "columnsTo": [
+            "session_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "session_notes_pain_range": {
+          "name": "session_notes_pain_range",
+          "value": "\"session_notes\".\"pain_0_10\" IS NULL OR (\"session_notes\".\"pain_0_10\" >= 0 AND \"session_notes\".\"pain_0_10\" <= 10)"
+        }
+      }
+    },
+    "training_blocks": {
+      "name": "training_blocks",
+      "columns": {
+        "block_id": {
+          "name": "block_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "goal_type": {
+          "name": "goal_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "primary_goal": {
+          "name": "primary_goal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "training_cycle_snapshot": {
+          "name": "training_cycle_snapshot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "starts_on": {
+          "name": "starts_on",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ends_on": {
+          "name": "ends_on",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "change_reason": {
+          "name": "change_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_training_blocks_profile_dates": {
+          "name": "idx_training_blocks_profile_dates",
+          "columns": [
+            "profile_id",
+            "starts_on",
+            "ends_on"
+          ],
+          "isUnique": false
+        },
+        "training_blocks_one_active_per_profile_uq": {
+          "name": "training_blocks_one_active_per_profile_uq",
+          "columns": [
+            "profile_id"
+          ],
+          "isUnique": true,
+          "where": "\"training_blocks\".\"ends_on\" IS NULL"
+        }
+      },
+      "foreignKeys": {
+        "training_blocks_profile_id_profile_profile_id_fk": {
+          "name": "training_blocks_profile_id_profile_profile_id_fk",
+          "tableFrom": "training_blocks",
+          "tableTo": "profile",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "profile_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "training_blocks_goal_type_allowed": {
+          "name": "training_blocks_goal_type_allowed",
+          "value": "\"training_blocks\".\"goal_type\" IN ('fat_loss', 'muscle_gain', 'strength', 'endurance', 'maintenance', 'general')"
+        }
+      }
+    },
+    "training_exercise_selections": {
+      "name": "training_exercise_selections",
+      "columns": {
+        "selection_id": {
+          "name": "selection_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "phase_id": {
+          "name": "phase_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "slot_id": {
+          "name": "slot_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "scope_value": {
+          "name": "scope_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "exercise": {
+          "name": "exercise",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "override_batch_id": {
+          "name": "override_batch_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "prescription_override": {
+          "name": "prescription_override",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "load_guidance_override": {
+          "name": "load_guidance_override",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "effort_override": {
+          "name": "effort_override",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recorded_at": {
+          "name": "recorded_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_training_exercise_selections_lookup": {
+          "name": "idx_training_exercise_selections_lookup",
+          "columns": [
+            "profile_id",
+            "phase_id",
+            "slot_id",
+            "scope",
+            "scope_value",
+            "recorded_at",
+            "selection_id"
+          ],
+          "isUnique": false
+        },
+        "idx_training_exercise_selections_override_batch": {
+          "name": "idx_training_exercise_selections_override_batch",
+          "columns": [
+            "override_batch_id",
+            "selection_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "training_exercise_selections_profile_id_profile_profile_id_fk": {
+          "name": "training_exercise_selections_profile_id_profile_profile_id_fk",
+          "tableFrom": "training_exercise_selections",
+          "tableTo": "profile",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "profile_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "training_exercise_selections_scope_allowed": {
+          "name": "training_exercise_selections_scope_allowed",
+          "value": "\"training_exercise_selections\".\"scope\" IN ('date', 'venue')"
+        }
+      }
+    },
+    "training_next_course_overrides": {
+      "name": "training_next_course_overrides",
+      "columns": {
+        "override_id": {
+          "name": "override_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "override_batch_id": {
+          "name": "override_batch_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "training_block_id": {
+          "name": "training_block_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "phase_id": {
+          "name": "phase_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "slot_id": {
+          "name": "slot_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "exercise": {
+          "name": "exercise",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "prescription_override": {
+          "name": "prescription_override",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "load_guidance_override": {
+          "name": "load_guidance_override",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "effort_override": {
+          "name": "effort_override",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_session_id": {
+          "name": "source_session_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recorded_at": {
+          "name": "recorded_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "consumed_by_session_id": {
+          "name": "consumed_by_session_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "consumed_at": {
+          "name": "consumed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "voided_at": {
+          "name": "voided_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_training_next_course_pending": {
+          "name": "idx_training_next_course_pending",
+          "columns": [
+            "profile_id",
+            "training_block_id",
+            "phase_id",
+            "consumed_at",
+            "voided_at",
+            "recorded_at"
+          ],
+          "isUnique": false
+        },
+        "idx_training_next_course_batch": {
+          "name": "idx_training_next_course_batch",
+          "columns": [
+            "override_batch_id",
+            "override_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "training_next_course_overrides_profile_id_profile_profile_id_fk": {
+          "name": "training_next_course_overrides_profile_id_profile_profile_id_fk",
+          "tableFrom": "training_next_course_overrides",
+          "tableTo": "profile",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "profile_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "training_next_course_overrides_training_block_id_training_blocks_block_id_fk": {
+          "name": "training_next_course_overrides_training_block_id_training_blocks_block_id_fk",
+          "tableFrom": "training_next_course_overrides",
+          "tableTo": "training_blocks",
+          "columnsFrom": [
+            "training_block_id"
+          ],
+          "columnsTo": [
+            "block_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "training_next_course_overrides_source_session_id_workout_sessions_session_id_fk": {
+          "name": "training_next_course_overrides_source_session_id_workout_sessions_session_id_fk",
+          "tableFrom": "training_next_course_overrides",
+          "tableTo": "workout_sessions",
+          "columnsFrom": [
+            "source_session_id"
+          ],
+          "columnsTo": [
+            "session_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "training_next_course_overrides_consumed_by_session_id_workout_sessions_session_id_fk": {
+          "name": "training_next_course_overrides_consumed_by_session_id_workout_sessions_session_id_fk",
+          "tableFrom": "training_next_course_overrides",
+          "tableTo": "workout_sessions",
+          "columnsFrom": [
+            "consumed_by_session_id"
+          ],
+          "columnsTo": [
+            "session_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "training_schedule_events": {
+      "name": "training_schedule_events",
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "profile_id": {
+          "name": "profile_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "effective_date": {
+          "name": "effective_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "event_type": {
+          "name": "event_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "resume_on": {
+          "name": "resume_on",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "recorded_at": {
+          "name": "recorded_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "voided_at": {
+          "name": "voided_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "void_reason": {
+          "name": "void_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "voided_by": {
+          "name": "voided_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "idx_training_schedule_events_profile_date": {
+          "name": "idx_training_schedule_events_profile_date",
+          "columns": [
+            "profile_id",
+            "effective_date",
+            "recorded_at",
+            "event_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "training_schedule_events_profile_id_profile_profile_id_fk": {
+          "name": "training_schedule_events_profile_id_profile_profile_id_fk",
+          "tableFrom": "training_schedule_events",
+          "tableTo": "profile",
+          "columnsFrom": [
+            "profile_id"
+          ],
+          "columnsTo": [
+            "profile_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "training_schedule_events_type_allowed": {
+          "name": "training_schedule_events_type_allowed",
+          "value": "\"training_schedule_events\".\"event_type\" IN ('pause', 'resume')"
+        },
+        "training_schedule_events_resume_allowed": {
+          "name": "training_schedule_events_resume_allowed",
+          "value": "(\"training_schedule_events\".\"event_type\" = 'pause' AND (\"training_schedule_events\".\"resume_on\" IS NULL OR \"training_schedule_events\".\"resume_on\" > \"training_schedule_events\".\"effective_date\")) OR (\"training_schedule_events\".\"event_type\" = 'resume' AND \"training_schedule_events\".\"resume_on\" IS NULL)"
+        }
+      }
+    },
+    "workout_sessions": {
+      "name": "workout_sessions",
+      "columns": {
+        "session_id": {
+          "name": "session_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "session_intent": {
+          "name": "session_intent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'normal'"
+        },
+        "training_block_id": {
+          "name": "training_block_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "training_phase_id": {
+          "name": "training_phase_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "session_title": {
+          "name": "session_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "session_type": {
+          "name": "session_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "started_at": {
+          "name": "started_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "started_at_utc": {
+          "name": "started_at_utc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "local_date": {
+          "name": "local_date",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "ended_at": {
+          "name": "ended_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "time_precision": {
+          "name": "time_precision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'exact'"
+        },
+        "duration_seconds": {
+          "name": "duration_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "total_sets_reported": {
+          "name": "total_sets_reported",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "burned_calories_kcal_reported": {
+          "name": "burned_calories_kcal_reported",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_tvl_kg_reported": {
+          "name": "total_tvl_kg_reported",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "effort_raw": {
+          "name": "effort_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "zone_1_seconds": {
+          "name": "zone_1_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "zone_2_seconds": {
+          "name": "zone_2_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "zone_3_seconds": {
+          "name": "zone_3_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "zone_4_seconds": {
+          "name": "zone_4_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "zone_5_seconds": {
+          "name": "zone_5_seconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "venue_manual": {
+          "name": "venue_manual",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "shoulder_pain_pre_0_10_manual": {
+          "name": "shoulder_pain_pre_0_10_manual",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "shoulder_pain_post_0_10_manual": {
+          "name": "shoulder_pain_post_0_10_manual",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fatigue_rpe_0_10_manual": {
+          "name": "fatigue_rpe_0_10_manual",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "notes_manual": {
+          "name": "notes_manual",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "active_calories_kcal": {
+          "name": "active_calories_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "total_calories_kcal": {
+          "name": "total_calories_kcal",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "elevation_metres": {
+          "name": "elevation_metres",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "floors_climbed": {
+          "name": "floors_climbed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "average_rpm": {
+          "name": "average_rpm",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "average_heart_rate_bpm": {
+          "name": "average_heart_rate_bpm",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "voided_at": {
+          "name": "voided_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "void_reason": {
+          "name": "void_reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "voided_by": {
+          "name": "voided_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "workout_sessions_started_at_utc_active_uq": {
+          "name": "workout_sessions_started_at_utc_active_uq",
+          "columns": [
+            "started_at_utc"
+          ],
+          "isUnique": true,
+          "where": "\"workout_sessions\".\"voided_at\" IS NULL AND \"workout_sessions\".\"started_at_utc\" IS NOT NULL"
+        },
+        "idx_workout_sessions_started_at": {
+          "name": "idx_workout_sessions_started_at",
+          "columns": [
+            "started_at"
+          ],
+          "isUnique": false
+        },
+        "idx_workout_sessions_local_date": {
+          "name": "idx_workout_sessions_local_date",
+          "columns": [
+            "local_date"
+          ],
+          "isUnique": false
+        },
+        "idx_workout_sessions_type_started": {
+          "name": "idx_workout_sessions_type_started",
+          "columns": [
+            "session_type",
+            "started_at"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "workout_sessions_training_block_id_training_blocks_block_id_fk": {
+          "name": "workout_sessions_training_block_id_training_blocks_block_id_fk",
+          "tableFrom": "workout_sessions",
+          "tableTo": "training_blocks",
+          "columnsFrom": [
+            "training_block_id"
+          ],
+          "columnsTo": [
+            "block_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "workout_sessions_duration_nonnegative": {
+          "name": "workout_sessions_duration_nonnegative",
+          "value": "\"workout_sessions\".\"duration_seconds\" >= 0"
+        },
+        "workout_sessions_sets_nonnegative": {
+          "name": "workout_sessions_sets_nonnegative",
+          "value": "\"workout_sessions\".\"total_sets_reported\" >= 0"
+        },
+        "workout_sessions_time_precision_allowed": {
+          "name": "workout_sessions_time_precision_allowed",
+          "value": "\"workout_sessions\".\"time_precision\" IN ('minute', 'exact')"
+        },
+        "workout_sessions_intent_allowed": {
+          "name": "workout_sessions_intent_allowed",
+          "value": "\"workout_sessions\".\"session_intent\" IN ('normal', 'deload', 'test')"
+        },
+        "workout_sessions_shoulder_pain_pre_range": {
+          "name": "workout_sessions_shoulder_pain_pre_range",
+          "value": "\"workout_sessions\".\"shoulder_pain_pre_0_10_manual\" IS NULL OR (\"workout_sessions\".\"shoulder_pain_pre_0_10_manual\" >= 0 AND \"workout_sessions\".\"shoulder_pain_pre_0_10_manual\" <= 10)"
+        },
+        "workout_sessions_shoulder_pain_post_range": {
+          "name": "workout_sessions_shoulder_pain_post_range",
+          "value": "\"workout_sessions\".\"shoulder_pain_post_0_10_manual\" IS NULL OR (\"workout_sessions\".\"shoulder_pain_post_0_10_manual\" >= 0 AND \"workout_sessions\".\"shoulder_pain_post_0_10_manual\" <= 10)"
+        },
+        "workout_sessions_fatigue_range": {
+          "name": "workout_sessions_fatigue_range",
+          "value": "\"workout_sessions\".\"fatigue_rpe_0_10_manual\" IS NULL OR (\"workout_sessions\".\"fatigue_rpe_0_10_manual\" >= 0 AND \"workout_sessions\".\"fatigue_rpe_0_10_manual\" <= 10)"
+        }
+      }
+    },
+    "workout_sets": {
+      "name": "workout_sets",
+      "columns": {
+        "set_id": {
+          "name": "set_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "session_id": {
+          "name": "session_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "exercise": {
+          "name": "exercise",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "set_no_session": {
+          "name": "set_no_session",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "set_no_exercise": {
+          "name": "set_no_exercise",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "weight_kg_reported": {
+          "name": "weight_kg_reported",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "reps": {
+          "name": "reps",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "time_seconds": {
+          "name": "time_seconds",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "distance_m": {
+          "name": "distance_m",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "rest_seconds": {
+          "name": "rest_seconds",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "effort_raw": {
+          "name": "effort_raw",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "primary_muscle_groups": {
+          "name": "primary_muscle_groups",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_note": {
+          "name": "source_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "set_type_manual": {
+          "name": "set_type_manual",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "load_basis_manual": {
+          "name": "load_basis_manual",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "pain_0_10_manual": {
+          "name": "pain_0_10_manual",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "venue_manual": {
+          "name": "venue_manual",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "coach_note": {
+          "name": "coach_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_file": {
+          "name": "source_file",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reported_load_x_reps_kg": {
+          "name": "reported_load_x_reps_kg",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "workout_sets_session_ordinal_uq": {
+          "name": "workout_sets_session_ordinal_uq",
+          "columns": [
+            "session_id",
+            "set_no_session"
+          ],
+          "isUnique": true
+        },
+        "idx_workout_sets_session": {
+          "name": "idx_workout_sets_session",
+          "columns": [
+            "session_id",
+            "set_no_session"
+          ],
+          "isUnique": false
+        },
+        "idx_workout_sets_exercise": {
+          "name": "idx_workout_sets_exercise",
+          "columns": [
+            "exercise",
+            "session_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "workout_sets_session_id_workout_sessions_session_id_fk": {
+          "name": "workout_sets_session_id_workout_sessions_session_id_fk",
+          "tableFrom": "workout_sets",
+          "tableTo": "workout_sessions",
+          "columnsFrom": [
+            "session_id"
+          ],
+          "columnsTo": [
+            "session_id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "workout_sets_session_ordinal_positive": {
+          "name": "workout_sets_session_ordinal_positive",
+          "value": "\"workout_sets\".\"set_no_session\" > 0"
+        },
+        "workout_sets_exercise_ordinal_positive": {
+          "name": "workout_sets_exercise_ordinal_positive",
+          "value": "\"workout_sets\".\"set_no_exercise\" > 0"
+        },
+        "workout_sets_reps_nonnegative": {
+          "name": "workout_sets_reps_nonnegative",
+          "value": "\"workout_sets\".\"reps\" IS NULL OR \"workout_sets\".\"reps\" >= 0"
+        },
+        "workout_sets_time_nonnegative": {
+          "name": "workout_sets_time_nonnegative",
+          "value": "\"workout_sets\".\"time_seconds\" IS NULL OR \"workout_sets\".\"time_seconds\" >= 0"
+        },
+        "workout_sets_distance_nonnegative": {
+          "name": "workout_sets_distance_nonnegative",
+          "value": "\"workout_sets\".\"distance_m\" IS NULL OR \"workout_sets\".\"distance_m\" >= 0"
+        },
+        "workout_sets_pain_range": {
+          "name": "workout_sets_pain_range",
+          "value": "\"workout_sets\".\"pain_0_10_manual\" IS NULL OR (\"workout_sets\".\"pain_0_10_manual\" >= 0 AND \"workout_sets\".\"pain_0_10_manual\" <= 10)"
+        }
+      }
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}
