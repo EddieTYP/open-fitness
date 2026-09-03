@@ -2399,11 +2399,7 @@ export async function getDashboardData(
         .map((row) => row.date),
     );
     const latestCardioRow = cardioRows
-      .filter(
-        (row) =>
-          row.totalSetsReported === 0 &&
-          recordedCardioDates.has(sessionLocalDate(row)),
-      )
+      .filter((row) => recordedCardioDates.has(sessionLocalDate(row)))
       .at(-1);
     const recoveryRows = sessionNoteRows.filter(
       (note) => note.noteType === "Recovery status",

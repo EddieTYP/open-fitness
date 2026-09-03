@@ -696,7 +696,11 @@ test("migration checks reject missing indexes, views, triggers, foreign keys, an
         sourcePath: pristinePath,
         migrationsDirectory,
       }),
-      { currentVersion: 13, targetVersion: 16, pendingVersions: [14, 15, 16] },
+      {
+        currentVersion: 13,
+        targetVersion: 17,
+        pendingVersions: [14, 15, 16, 17],
+      },
     );
     for (const [name, sql] of corruptions) {
       const corruptPath = join(root, `${name}.sqlite`);
@@ -744,10 +748,10 @@ test("local migration backs up version 7, applies pending versions atomically, a
 
     assert.equal(result.migrated, true);
     assert.equal(result.fromVersion, 7);
-    assert.equal(result.toVersion, 16);
+    assert.equal(result.toVersion, 17);
     assert.deepEqual(
       result.appliedVersions,
-      [8, 9, 10, 11, 12, 13, 14, 15, 16],
+      [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
     );
     assert.equal(result.backup.manifest.database.schemaVersion, 7);
     assert.equal(result.backup.manifest.database.rowCounts.profile, 1);
@@ -761,7 +765,7 @@ test("local migration backs up version 7, applies pending versions atomically, a
     try {
       assert.equal(
         migrated.prepare("SELECT schema_version AS value FROM schema_metadata").get().value,
-        16,
+        17,
       );
       assert.equal(
         migrated
@@ -831,8 +835,8 @@ test("local migration backs up version 7, applies pending versions atomically, a
       applicationVersion: "test",
     });
     assert.equal(second.migrated, false);
-    assert.equal(second.fromVersion, 16);
-    assert.equal(second.toVersion, 16);
+    assert.equal(second.fromVersion, 17);
+    assert.equal(second.toVersion, 17);
     assert.deepEqual(second.appliedVersions, []);
     assert.equal(second.backup, null);
     assert.equal(backupFilesBefore.size, 2);
@@ -868,8 +872,8 @@ test("body measurement local dates migrate safely and are enforced", async () =>
       applicationVersion: "test",
     });
     assert.equal(result.fromVersion, 12);
-    assert.equal(result.toVersion, 16);
-    assert.deepEqual(result.appliedVersions, [13, 14, 15, 16]);
+    assert.equal(result.toVersion, 17);
+    assert.deepEqual(result.appliedVersions, [13, 14, 15, 16, 17]);
 
     const migrated = new DatabaseSync(sourcePath);
     try {
@@ -962,19 +966,19 @@ test("failed migration rolls back schema and preserves a verified pre-migration 
   const journalPath = join(fixtureMigrations, "meta", "_journal.json");
   const journal = JSON.parse(readFileSync(journalPath, "utf8"));
   journal.entries.push({
-    idx: 17,
+    idx: 18,
     version: "6",
     when: 0,
-    tag: "0017_broken_fixture",
+    tag: "0018_broken_fixture",
     breakpoints: true,
   });
   writeFileSync(journalPath, `${JSON.stringify(journal, null, 2)}\n`);
   cpSync(
-    join(fixtureMigrations, "meta", "0016_snapshot.json"),
     join(fixtureMigrations, "meta", "0017_snapshot.json"),
+    join(fixtureMigrations, "meta", "0018_snapshot.json"),
   );
   writeFileSync(
-    join(fixtureMigrations, "0017_broken_fixture.sql"),
+    join(fixtureMigrations, "0018_broken_fixture.sql"),
     "CREATE UNIQUE INDEX migration_should_rollback ON body_measurements(source_file);\n",
   );
 
@@ -1072,8 +1076,8 @@ test("CLI wrappers perform check, migration, backup, and verified restore", () =
       ok: true,
       mode: "check",
       currentVersion: 7,
-      targetVersion: 16,
-      pendingVersions: [8, 9, 10, 11, 12, 13, 14, 15, 16],
+      targetVersion: 17,
+      pendingVersions: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
     });
     assert.deepEqual(readdirSync(backupDirectory), []);
     assert.equal(sha256File(sourcePath), sourceHashBefore);
@@ -1083,10 +1087,10 @@ test("CLI wrappers perform check, migration, backup, and verified restore", () =
     );
     assert.equal(applied.migrated, true);
     assert.equal(applied.fromVersion, 7);
-    assert.equal(applied.toVersion, 16);
+    assert.equal(applied.toVersion, 17);
     assert.deepEqual(
       applied.appliedVersions,
-      [8, 9, 10, 11, 12, 13, 14, 15, 16],
+      [8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
     );
     assert.equal(typeof applied.backupFile, "string");
     assert.equal(typeof applied.manifestFile, "string");
@@ -1094,7 +1098,7 @@ test("CLI wrappers perform check, migration, backup, and verified restore", () =
 
     const manual = parseCliSuccess(runCli(backupCliPath, [], environment));
     assert.equal(manual.ok, true);
-    assert.equal(manual.schemaVersion, 16);
+    assert.equal(manual.schemaVersion, 17);
     assert.equal(manual.sha256.length, 64);
     assert.equal(readdirSync(backupDirectory).length, 4);
 
@@ -1104,7 +1108,7 @@ test("CLI wrappers perform check, migration, backup, and verified restore", () =
       runCli(verifyCliPath, [backupPath, manifestPath, restorePath, reportPath]),
     );
     assert.equal(verified.ok, true);
-    assert.equal(verified.schemaVersion, 16);
+    assert.equal(verified.schemaVersion, 17);
     assert.equal(verified.sha256, manual.sha256);
     assert.equal(JSON.parse(readFileSync(reportPath, "utf8")).passed, true);
     assert.equal(JSON.stringify(verified).includes(root), false);

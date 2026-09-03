@@ -69,14 +69,14 @@ test("clean install creates one owner profile and no bundled health history", ()
       ok: true,
       databaseFile: "fitness.sqlite",
       profileId: "owner",
-      schemaVersion: 16,
+      schemaVersion: 17,
     });
     assert.equal(lstatSync(databasePath).mode & 0o777, 0o600);
 
     const database = new DatabaseSync(databasePath, { readOnly: true });
     try {
       const metadata = database.prepare("SELECT * FROM schema_metadata").get();
-      assert.equal(metadata.schema_version, 16);
+      assert.equal(metadata.schema_version, 17);
       assert.equal(metadata.database_name, OPEN_FITNESS_DATABASE_NAME);
       assert.equal(metadata.timezone, OPEN_FITNESS_DEFAULT_TIMEZONE);
 
