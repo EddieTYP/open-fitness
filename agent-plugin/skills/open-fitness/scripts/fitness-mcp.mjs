@@ -761,7 +761,8 @@ try {
 const coreInstructions = Object.freeze({
   contractVersion: writeContractVersion,
   workflow: [
-    "Treat the authenticated Open Fitness API as the record of truth and read only the smallest relevant resource.",
+    "Treat the authenticated Open Fitness API as the record of truth. Before answering any question that depends on mutable Fitness records, read the smallest relevant resource in the current turn; earlier conversation, memory, and prior-turn tool results are not current state because records may change through another interface. This includes claims that a record is missing. General explanations and calculations using only user-supplied values need no state read.",
+    "Reuse a successful current-turn read until an affected mutation occurs. After a mutation, use verified facts for acknowledgement and refresh the affected view for updated totals or derived state. If a required read fails, state that current records could not be verified rather than presenting stale totals or recommendations as current.",
     "Classify the request as read/advice, completed record, pending plan, correction, or calculation only.",
     "Before every fitness_write operation, read fitness_read resource write_contract with that exact operation and follow its bounded card.",
     "Use the profile preferredLocale for newly composed stored text; preserve explicit owner wording and brand/product names.",

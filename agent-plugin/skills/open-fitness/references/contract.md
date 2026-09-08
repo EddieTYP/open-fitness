@@ -64,6 +64,16 @@ most once with that same ID only after an `uncertain` outcome whose
 
 ## Read resources
 
+For answers that depend on mutable Fitness records, read the smallest relevant
+resource in the current turn, including before claiming a record is missing.
+Prior-turn results, conversation, and memory cannot establish current state;
+another interface may have changed the records. Reuse a successful current-turn
+read until an affected mutation; then use verified write facts for acknowledgement
+and refresh the affected view for updated totals or derived state. If a required
+read fails, state that current records could not be verified instead of using
+stale values as current. General explanations and calculations using only
+user-supplied values require no state read.
+
 | Need | `fitness_read` resource and parameters |
 |---|---|
 | Dashboard/current state | `snapshot` |

@@ -18,8 +18,12 @@ reply.
    loaded the Skill begins with resource `instructions`.
 2. Classify the intent: read/advice, completed record, pending plan,
    correction, or calculation only.
-3. Read only the smallest relevant state with `fitness_read`. An MCP client may
-   display a qualified or namespaced form of that tool name.
+3. When an answer depends on mutable Fitness records, read the smallest
+   relevant state with `fitness_read` in the current turn before answering.
+   Earlier conversation, memory, and prior-turn tool results are not current
+   state: records may change through the Web UI or another integration.
+   General explanations and calculations using only user-supplied values need
+   no state read. An MCP client may display a qualified or namespaced tool name.
 4. For advice, apply the evidence hierarchy in
    [references/evidence.md](references/evidence.md). Before any write, read
    resource `write_contract` with the exact intended operation and follow its
@@ -274,6 +278,14 @@ brief acknowledgement rather than echoing internal mutation details. Never make
 probe/test rows in a persistent database.
 
 ## Advice and reply
+
+Use current-turn API evidence for record-dependent claims, comparisons, and
+recommendations, including claims that a record is missing. If the necessary
+read fails, say that current state could not be verified; do not present old
+totals or a recommendation derived from them as current. A successful read in
+this turn can be reused until an affected mutation occurs. After a mutation,
+use its verified facts for acknowledgement and refresh the affected view when
+the answer depends on updated totals or derived state.
 
 Use the `analysis` resource with the narrowest useful profile-local date range,
 normally no more than 84 days. Use its lean default view; request `view: "full"`
