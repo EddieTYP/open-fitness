@@ -89,13 +89,13 @@ test("the native Next runtime is pinned to the audited security update", () => {
   const manifest = json("package.json");
   const lock = json("package-lock.json");
 
-  assert.equal(manifest.dependencies?.next, "16.3.0");
-  assert.equal(manifest.devDependencies?.["eslint-config-next"], "16.3.0");
-  assert.equal(lock.packages?.[""]?.dependencies?.next, "16.3.0");
-  assert.equal(lock.packages?.["node_modules/next"]?.version, "16.3.0");
+  assert.equal(manifest.dependencies?.next, "16.3.5");
+  assert.equal(manifest.devDependencies?.["eslint-config-next"], "16.3.5");
+  assert.equal(lock.packages?.[""]?.dependencies?.next, "16.3.5");
+  assert.equal(lock.packages?.["node_modules/next"]?.version, "16.3.5");
   assert.equal(
     lock.packages?.["node_modules/eslint-config-next"]?.version,
-    "16.3.0",
+    "16.3.5",
   );
 });
 

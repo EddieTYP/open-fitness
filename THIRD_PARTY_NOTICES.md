@@ -10,7 +10,7 @@ each package together with its package metadata and license files.
 | `@libsql/client` | 0.17.4 | MIT |
 | `@phosphor-icons/react` | 2.1.10 | MIT |
 | `drizzle-orm` | 0.45.2 | Apache-2.0 |
-| `next` | 16.3.0 | MIT |
+| `next` | 16.3.5 | MIT |
 | `react` | 19.2.6 | MIT |
 | `react-dom` | 19.2.6 | MIT |
 
