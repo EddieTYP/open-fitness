@@ -20,6 +20,7 @@ const writeOperations = [
   "workout_update",
   "body_measurement_create",
   "body_measurement_enrich",
+  "body_measurement_update",
   "session_note_create",
   "correction_create",
   "training_exercise_select",
@@ -312,7 +313,7 @@ test("plan read items round-trip through preserve-and-append revisions", async (
   }
 });
 
-test("meal read items round-trip through full replacement updates", async () => {
+test("meal full replacement preserves read items and appends a one-off estimate", async () => {
   let revisedBody = null;
   const existingMeal = {
     mealId: "MEAL|ROUNDTRIP|1",
@@ -363,7 +364,9 @@ test("meal read items round-trip through full replacement updates", async () => 
   const mcp = startMcp(api.baseUrl);
   try {
     await readCoreInstructions(mcp);
-    await readWriteContract(mcp, "meal_update");
+    const contract = await readWriteContract(mcp, "meal_update");
+    assert.equal(contract.data.bodyVariants.append_food.foodId, "FOOD|...");
+    assert.match(contract.data.rules.join(" "), /preserve every existing item/);
     const read = payload(
       await mcp.request("tools/call", {
         name: "fitness_read",
@@ -384,14 +387,21 @@ test("meal read items round-trip through full replacement updates", async () => 
           body: {
             mealId: existingMeal.mealId,
             expectedRevisionNo: 1,
-            items: read.data.meals[0].items,
+            items: [
+              ...read.data.meals[0].items,
+              { name: "Estimated chicken", quantity: 79, unit: "g", confidence: "low", nutrients: { energyKcal: 142, proteinG: 18.5 } },
+            ],
           },
         },
       }),
     );
     assert.equal(result.status, "succeeded");
     assert.equal(result.writeVerified, true);
-    assert.equal(revisedBody.items.length, 1);
+    assert.equal(revisedBody.items.length, 2);
+    assert.equal(revisedBody.items[0].foodId, "FOOD|1");
+    assert.equal(revisedBody.items[0].quantity, 100);
+    assert.deepEqual(revisedBody.items[0].nutrients, { energyKcal: 100, proteinG: 10 });
+    assert.equal(revisedBody.items[1].name, "Estimated chicken");
     assert.equal(
       Object.prototype.hasOwnProperty.call(revisedBody.items[0], "mealItemId"),
       false,
@@ -403,6 +413,86 @@ test("meal read items round-trip through full replacement updates", async () => 
       ),
       false,
     );
+  } finally {
+    await mcp.close();
+    await api.close();
+  }
+});
+
+test("measurement contract fields match the API input, preventing silently dropped fields", async () => {
+  const api = await listen((_request, response) => json(response, 500, {}));
+  const mcp = startMcp(api.baseUrl);
+  try {
+    await readCoreInstructions(mcp);
+    const contract = await readWriteContract(mcp, "body_measurement_create");
+    const route = readFileSync(new URL("../app/api/fitness/body-measurements/route.ts", import.meta.url), "utf8");
+    const input = route.match(/type BodyMeasurementInput = \{([\s\S]*?)\n\};/)[1];
+    const numbers = [...input.matchAll(/(\w+)\?: number/g)].map((match) => match[1]);
+    assert.deepEqual([...contract.data.optionalFields.numeric, "weightKg"].sort(), numbers.sort());
+  } finally {
+    await mcp.close();
+    await api.close();
+  }
+});
+
+test("measurement unknown aliases and append_food snapshots fail before any API request", async () => {
+  let calls = 0;
+  const api = await listen((_request, response) => { calls++; json(response, 500, {}); });
+  const mcp = startMcp(api.baseUrl);
+  try {
+    await readInstructions(mcp);
+    for (const extra of [{ bmrKcal: 1910 }, { muscleQualityScore: 73 }, { segmentalBodyFatPct: { leftArm: 17 } }, { segmentalMuscleMassKg: { trunk: 34 } }, { segmentalMuscleQualityScore: { leftArm: 59 } }, { muscleQuality: "73" }]) {
+      const result = payload(await mcp.request("tools/call", {
+        name: "fitness_write", arguments: { operation: "body_measurement_create", body: {
+          measurementId: "TEST|strict", measuredAt: "2099-01-01T08:00:00+08:00", source: "Synthetic export", sourceDevice: "Synthetic scale", weightKg: 80, ...extra,
+        } },
+      }));
+      assert.equal(result.status, "failed");
+      assert.equal(result.writeAttempted, false);
+    }
+    const rejected = payload(await mcp.request("tools/call", {
+      name: "fitness_write", arguments: { operation: "meal_update", body: {
+        mealId: "MEAL|1", expectedRevisionNo: 1, action: "append_food", item: { name: "One-off estimate", quantity: 79 },
+      } },
+    }));
+    assert.equal(rejected.writeAttempted, false);
+    assert.match(rejected.facts.reason, /Allowed arguments:.*foodId/);
+    assert.equal(calls, 0);
+  } finally {
+    await mcp.close();
+    await api.close();
+  }
+});
+
+test("measurement verification detects lost extended data, timestamp and device mismatches without retrying", async () => {
+  let submitted;
+  let mutations = 0;
+  let mismatch = {};
+  const api = await listen(async (request, response) => {
+    if (request.method === "POST") {
+      mutations++;
+      submitted = await readJson(request);
+      json(response, 201, { measurementId: submitted.measurementId, requestId: request.headers["x-idempotency-key"] });
+    } else {
+      json(response, 200, { measurement: { ...submitted, ...mismatch } });
+    }
+  });
+  const mcp = startMcp(api.baseUrl);
+  try {
+    await readCoreInstructions(mcp);
+    await readWriteContract(mcp, "body_measurement_create");
+    for (const changed of [{}, { bmrKcalPerDay: null }, { muscleQuality: null }, { bodyFatLeftArmPct: null }, { sourceDevice: "Another scale" }, { measuredAt: "2099-01-02T08:00:00+08:00" }]) {
+      mismatch = changed;
+      const before = mutations;
+      const result = payload(await mcp.request("tools/call", {
+        name: "fitness_write", arguments: { operation: "body_measurement_create", body: {
+          measurementId: `TEST|verification|${before}`, measuredAt: "2099-01-01T08:00:00+08:00", source: "Synthetic export", sourceDevice: "Synthetic scale", weightKg: 80, bmrKcalPerDay: 1800, muscleQuality: 70, bodyFatLeftArmPct: 17,
+        } },
+      }));
+      assert.equal(mutations, before + 1);
+      assert.equal(result.status, Object.keys(changed).length ? "uncertain" : "succeeded");
+      if (Object.keys(changed).length) assert.equal(result.errorCode, "WRITE_VERIFICATION_FAILED");
+    }
   } finally {
     await mcp.close();
     await api.close();
@@ -786,6 +876,7 @@ test("grouped workout aliases verify through nested workoutSessions[0] readback"
             startedAt: "2099-01-02T10:00:00Z",
             durationSeconds: 3600,
             sessionIntent: "normal",
+            trainingPhaseId: "leg",
             trainingPhaseId: "push",
             timePrecision: "minute",
             sets: [
@@ -821,6 +912,7 @@ test("grouped workout aliases verify through nested workoutSessions[0] readback"
             startedAt: "2099-01-02T10:00:00Z",
             durationSeconds: 3600,
             sessionIntent: "normal",
+            trainingPhaseId: "leg",
             trainingPhaseId: "push",
             timePrecision: "minute",
             exercises: [
@@ -1026,6 +1118,7 @@ test("ambiguous transport and readback stay uncertain with one mutation", async 
             startedAt: "2099-01-02T10:00:00Z",
             durationSeconds: 3600,
             sessionIntent: "normal",
+            trainingPhaseId: "leg",
             sets: [],
           },
         },
@@ -1551,6 +1644,7 @@ test("workout validation reports validated without claiming a mutation", async (
             startedAt: "2099-01-02T10:00:00Z",
             durationSeconds: 3600,
             sessionIntent: "normal",
+            trainingPhaseId: "leg",
             sets: [],
           },
         },
@@ -1586,6 +1680,7 @@ test("hydrated mutation responses authoritatively verify course, plan delete, an
         date: body.date,
         plannedSessionId: null,
         sessionIntent: "normal",
+        trainingPhaseId: "leg",
         sourceSessionId: null,
         slotId: body.items[0].slotId,
         exercise: body.items[0].exercise,
@@ -1727,6 +1822,7 @@ test("missing authoritative hydrated fields stays uncertain after one mutation",
         date: body.date,
         plannedSessionId: null,
         sessionIntent: "normal",
+        trainingPhaseId: "leg",
         sourceSessionId: null,
         slotId: item.slotId,
         exercise: item.exercise,

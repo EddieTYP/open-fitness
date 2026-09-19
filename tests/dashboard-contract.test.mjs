@@ -209,7 +209,9 @@ test("mobile day and nutrition transitions stay stable", async () => {
     source("app/globals.css"),
   ]);
 
-  assert.match(nutritionView, /if \(loading && !data\)/);
+  assert.match(nutritionView, /const hasSelectedDate = data\?\.localDate === localDate/);
+  assert.match(nutritionView, /if \(loading && \(!data \|\| !hasSelectedDate\)\)/);
+  assert.match(nutritionView, /if \(!data \|\| !hasSelectedDate \|\| data\.status === "unavailable"\)/);
   assert.match(nutritionView, /const NUTRITION_LOAD_TIMEOUT_MS = 10_000/);
   assert.match(nutritionView, /const controller = new AbortController\(\)/);
   assert.match(nutritionView, /signal: controller\.signal/);
@@ -247,7 +249,7 @@ test("food library keeps mobile search results usable and resets nested scroll",
   );
   assert.match(
     nutritionView,
-    /const resetFoodEditorScroll = useCallback\(\(\) => \{[\s\S]*?foodEditorRef\.current\.scrollTop = 0/,
+    /const resetFoodEditorScroll = useCallback\(\(reveal = false\) => \{[\s\S]*?foodEditorRef\.current\.scrollTop = 0/,
   );
   assert.match(nutritionView, /ref=\{libraryListRef\} className="library-list"/);
   assert.match(
@@ -259,7 +261,7 @@ test("food library keeps mobile search results usable and resets nested scroll",
     "open, search, save, and status changes must restore the result list to its top",
   );
   assert.ok(
-    nutritionView.match(/resetFoodEditorScroll\(\)/g)?.length >= 5,
+    nutritionView.match(/resetFoodEditorScroll\((?:true)?\)/g)?.length >= 5,
     "open, select, create, save, and status changes must restore the editor to its top",
   );
 
@@ -269,9 +271,11 @@ test("food library keeps mobile search results usable and resets nested scroll",
   const desktop = styles.slice(desktopStart, desktopEnd);
   assert.match(
     mobile,
-    /\.library-body\s*\{[^}]*grid-template-rows:\s*clamp\(260px, 38dvh, 320px\) minmax\(0, 1fr\)/,
+    /\.library-body\s*\{[^}]*min-height:\s*0[^}]*overflow-y:\s*auto/,
   );
-  for (const selector of ["library-list", "food-editor"]) {
+  assert.match(mobile, /\.food-editor\s*\{[^}]*overflow:\s*visible/);
+  assert.match(nutritionView, /if \(reveal && window\.matchMedia[\s\S]*?scrollIntoView/);
+  for (const selector of ["library-list"]) {
     assert.match(
       mobile,
       new RegExp(
@@ -281,7 +285,7 @@ test("food library keeps mobile search results usable and resets nested scroll",
   }
   assert.match(
     desktop,
-    /\.library-body\s*\{[^}]*grid-template-columns:\s*220px minmax\(0, 1fr\)[^}]*grid-template-rows:\s*minmax\(0, 1fr\)/,
+    /\.library-body\s*\{[^}]*grid-template-columns:\s*260px minmax\(0, 1fr\)[^}]*grid-template-rows:\s*minmax\(0, 1fr\)/,
   );
 });
 
@@ -373,15 +377,15 @@ test("course rows group phases on mobile without shrinking desktop columns", asy
   );
   assert.match(
     mobile,
-    /\.course-prescription\s*\{[^}]*min-width:\s*0[^}]*text-overflow:\s*ellipsis/,
+    /\.course-prescription\s*\{[^}]*min-width:\s*0[^}]*text-overflow:\s*clip/,
   );
   assert.match(
     mobile,
-    /\.course-load\s*\{[^}]*min-width:\s*0[^}]*text-align:\s*left[^}]*text-overflow:\s*ellipsis/,
+    /\.course-load\s*\{[^}]*min-width:\s*0[^}]*text-align:\s*left[^}]*text-overflow:\s*clip/,
   );
   assert.match(
     mobile,
-    /\.course-effort\s*\{[^}]*min-width:\s*0[^}]*text-overflow:\s*ellipsis/,
+    /\.course-effort\s*\{[^}]*min-width:\s*0[^}]*text-overflow:\s*clip/,
   );
   assert.doesNotMatch(mobile, /\.course-metrics\s*\{[^}]*grid-template-columns/);
   assert.match(
@@ -394,15 +398,15 @@ test("course rows group phases on mobile without shrinking desktop columns", asy
   );
   assert.match(
     mobile,
-    /\.course-row summary\s*\{[^}]*min-height:\s*52px[^}]*row-gap:\s*2px[^}]*padding:\s*6px 12px/,
+    /\.course-row summary\s*\{[^}]*min-height:\s*52px[^}]*row-gap:\s*8px[^}]*padding:\s*14px 18px/,
   );
   assert.match(
     mobile,
-    /\.course-name-text\s*\{[^}]*line-height:\s*1\.25[^}]*-webkit-line-clamp:\s*2/,
+    /\.course-name-text\s*\{[^}]*line-height:\s*1\.4[^}]*-webkit-line-clamp:\s*2/,
   );
   assert.match(
     mobile,
-    /\.course-phase-group\s*\{[^}]*min-height:\s*28px[^}]*padding:\s*4px 12px/,
+    /\.course-phase-group\s*\{[^}]*min-height:\s*28px[^}]*background:\s*var\(--surface-muted\)[^}]*padding:\s*8px 18px/,
   );
   assert.match(
     desktop,

@@ -22,7 +22,7 @@ import {
 import { useI18n } from "@/components/i18n/I18nProvider";
 import { NutritionTrend } from "@/components/NutritionTrend";
 import { NutritionPlans } from "@/components/nutrition/NutritionPlans";
-import { NutritionMacroStrip } from "@/components/nutrition/NutritionPreview";
+import { FoodNutrientSummary, NutritionMacroStrip } from "@/components/nutrition/NutritionPreview";
 import { NutritionQuickRecord } from "@/components/nutrition/NutritionQuickRecord";
 import { clientUuid } from "@/lib/client-id";
 import type {
@@ -1003,7 +1003,7 @@ export function NutritionView({
   timezone: string;
   onDateChange?: (date: string) => void;
 }) {
-  const { t, formatNumber, formatTime } = useI18n();
+  const { t, formatDate, formatNumber, formatTime } = useI18n();
   const missingValue = t("nutrition.value.noRecord");
   const valueLabel = (value: number | null, unit = "", digits = 0) =>
     numberLabel(value, formatNumber, missingValue, unit, digits);
@@ -1051,9 +1051,12 @@ export function NutritionView({
       if (libraryListRef.current) libraryListRef.current.scrollTop = 0;
     });
   }, []);
-  const resetFoodEditorScroll = useCallback(() => {
+  const resetFoodEditorScroll = useCallback((reveal = false) => {
     window.requestAnimationFrame(() => {
       if (foodEditorRef.current) foodEditorRef.current.scrollTop = 0;
+      if (reveal && window.matchMedia("(max-width: 679px)").matches) {
+        foodEditorRef.current?.scrollIntoView({ block: "start" });
+      }
     });
   }, []);
   const currentToday = dateInTimeZone(new Date(), timezone);
@@ -1305,7 +1308,7 @@ export function NutritionView({
   function selectLibraryFood(food: NutritionFood) {
     setLibraryError(null);
     setEditor(editorFromFood(food));
-    resetFoodEditorScroll();
+    resetFoodEditorScroll(true);
   }
 
   function updateEditorNutrient(key: NutrientKey, value: string) {
@@ -1396,7 +1399,9 @@ export function NutritionView({
     }
   }
 
-  if (loading && !data) {
+  const hasSelectedDate = data?.localDate === localDate;
+
+  if (loading && (!data || !hasSelectedDate)) {
     return (
       <div className="nutrition-view" aria-busy="true">
         <div className="skeleton nutrition-skeleton-summary" />
@@ -1406,11 +1411,12 @@ export function NutritionView({
     );
   }
 
-  if (!data || data.status === "unavailable") {
+  if (!data || !hasSelectedDate || data.status === "unavailable") {
     return (
       <div className="nutrition-view">
         <div className="state-message state-unavailable" role="alert">
           <strong>{t("nutrition.view.unavailableTitle")}</strong>
+          <span>{formatDate(localDate, { month: "long", day: "numeric" })}</span>
           <span>
             {error || t("nutrition.view.tryLater")}
           </span>
@@ -1425,6 +1431,11 @@ export function NutritionView({
           >
             {t("nutrition.view.retry")}
           </button>
+          {localDate !== todayDate ? (
+            <button type="button" className="secondary-button" onClick={() => changeViewedDate(todayDate)}>
+              {t("nutrition.view.backToday")}
+            </button>
+          ) : null}
         </div>
       </div>
     );
@@ -1468,6 +1479,10 @@ export function NutritionView({
       className={`nutrition-view${loading ? " is-refreshing" : ""}`}
       aria-busy={loading}
     >
+      <header className="nutrition-page-heading">
+        <h1>{t("fitness.nav.nutrition")}</h1>
+        <span>{t("nutrition.view.overviewSubtitle")}</span>
+      </header>
       {error ? (
         <div className="state-message state-unavailable" role="alert">
           {error}
@@ -1564,6 +1579,23 @@ export function NutritionView({
         )}
       </section>
 
+      <NutritionQuickRecord
+        nutrition={data}
+        timezone={timezone}
+        showMealAction={canLogSelectedDate}
+        showEnergyAction={isToday}
+        draftMeal={comboDraftMeal}
+        onDraftConsumed={() => setComboDraftMeal(null)}
+        onUpdated={setData}
+        onOpenFoodLibrary={() => {
+          setLibraryOpen(true);
+          setLibraryError(null);
+          setLibraryQuery("");
+          setEditor(emptyFoodEditor());
+        }}
+        onError={setError}
+      />
+
       <section className="nutrition-summary">
         <div className="nutrition-summary-top">
           <div>
@@ -1575,6 +1607,7 @@ export function NutritionView({
                   ? t("nutrition.view.cannotCalculate")
                 : `${formatNumber(Math.abs(remaining))} kcal`}
             </strong>
+            <small className="nutrition-day-status">{dayStatusLabel}</small>
           </div>
           <div className="nutrition-target-note">
             <span>
@@ -1582,7 +1615,6 @@ export function NutritionView({
                 value: valueLabel(data.budget.consumedKcal, "kcal", 0),
               })}
             </span>
-            <small>{dayStatusLabel}</small>
           </div>
         </div>
 
@@ -1668,22 +1700,7 @@ export function NutritionView({
         </details>
       </section>
 
-      <NutritionQuickRecord
-        nutrition={data}
-        timezone={timezone}
-        showMealAction={canLogSelectedDate}
-        showEnergyAction={isToday}
-        draftMeal={comboDraftMeal}
-        onDraftConsumed={() => setComboDraftMeal(null)}
-        onUpdated={setData}
-        onOpenFoodLibrary={() => {
-          setLibraryOpen(true);
-          setLibraryError(null);
-          setLibraryQuery("");
-          setEditor(emptyFoodEditor());
-        }}
-        onError={setError}
-      />
+
         </>
       ) : null}
 
@@ -1848,7 +1865,7 @@ export function NutritionView({
                   onClick={() => {
                     setLibraryError(null);
                     setEditor(emptyFoodEditor());
-                    resetFoodEditorScroll();
+                    resetFoodEditorScroll(true);
                   }}
                 >
                   <Plus size={16} aria-hidden="true" />
@@ -1864,12 +1881,13 @@ export function NutritionView({
                       }
                       onClick={() => selectLibraryFood(food)}
                     >
-                      <span>{food.displayName}</span>
-                      <small>
-                        {food.isActive
-                          ? food.defaultUnit
-                          : t("nutrition.view.library.inactive")}
-                      </small>
+                      <span className="food-result-content">
+                        <strong>{food.displayName}</strong>
+                        <FoodNutrientSummary food={food} />
+                        {!food.isActive ? (
+                          <small>{t("nutrition.view.library.inactive")}</small>
+                        ) : null}
+                      </span>
                     </button>
                   ))}
                 </div>

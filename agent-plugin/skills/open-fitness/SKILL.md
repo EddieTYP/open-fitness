@@ -61,6 +61,12 @@ reply.
   true. Otherwise say briefly that there are not yet enough comparable samples.
   Do not fetch broad analysis or repeat the exact readback; reserve 7/28-day
   analysis for an explicit formal review.
+- Correct an existing body measurement with `body_measurement_update` after
+  reading that exact record and its current `revision`. Preserve its identity;
+  include all supplied corrected numeric values, the revision and a reason.
+  Omit unspecified values; use null only when the owner explicitly clears an
+  optional value. A conflict requires a fresh read and reconciliation, not an
+  automatic overwrite or a duplicate measurement.
 - Append corrections and soft-void/restore an invalid workout.
 - Use a known or owner-supplied exercise for one date. A clear instruction such
   as “today use X” authorizes that date-scoped change without another scope

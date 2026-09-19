@@ -2,27 +2,28 @@
 
 :root {
   color-scheme: light dark;
-  --canvas: #f2f5f4;
-  --canvas-elevated: #f7f9f8;
-  --surface: #fbfcfb;
-  --surface-muted: #edf2f0;
-  --surface-pressed: #e2ebe7;
-  --ink: #17211f;
-  --ink-secondary: #5e6b67;
-  --ink-tertiary: #6b7672;
-  --rule: #d6dfdc;
-  --accent: #23695a;
-  --accent-hover: #1b584b;
-  --accent-soft: #dfede8;
-  --accent-ink: #f7fbf9;
+  --canvas: #f4f5f7;
+  --canvas-elevated: #fafbfc;
+  --surface: #ffffff;
+  --surface-muted: #f0f2f4;
+  --surface-pressed: #e5eaed;
+  --ink: #20272b;
+  --ink-secondary: #58656d;
+  --ink-tertiary: #65727b;
+  --rule: #dde3e7;
+  --accent: #147966;
+  --accent-hover: #106352;
+  --accent-soft: #e2f1ec;
+  --accent-ink: #ffffff;
   --watch: #8b641e;
   --watch-soft: #f3ead8;
   --danger: #9f3a3a;
-  --focus: #23695a;
+  --focus: #147966;
   --shadow: 0 16px 46px rgb(31 58 50 / 0.08);
-  --radius-panel: 16px;
+  --radius-panel: 18px;
   --radius-control: 11px;
-  --page-max: 760px;
+  --page-max: 820px;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
@@ -34,23 +35,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --canvas: #111513;
-    --canvas-elevated: #171c19;
-    --surface: #1c221f;
-    --surface-muted: #242c28;
-    --surface-pressed: #2c3732;
-    --ink: #eef3f0;
-    --ink-secondary: #aebbb6;
-    --ink-tertiary: #87958f;
-    --rule: #35413c;
-    --accent: #69b6a2;
-    --accent-hover: #82c7b5;
-    --accent-soft: #243c35;
-    --accent-ink: #101613;
+    --canvas: #14181b;
+    --canvas-elevated: #1b2024;
+    --surface: #20262b;
+    --surface-muted: #293137;
+    --surface-pressed: #323e46;
+    --ink: #edf2f5;
+    --ink-secondary: #b5c0c7;
+    --ink-tertiary: #9cabb5;
+    --rule: #35424b;
+    --accent: #71ccb4;
+    --accent-hover: #98ddca;
+    --accent-soft: #243e37;
+    --accent-ink: #112b23;
     --watch: #edc77b;
     --watch-soft: #3b3323;
     --danger: #f09a9a;
-    --focus: #8bd1be;
+    --focus: #8fdac5;
     --shadow: 0 18px 52px rgb(0 0 0 / 0.24);
   }
 }
@@ -117,8 +118,8 @@ button:active {
   display: flex;
   min-height: 64px;
   align-items: center;
-  border-bottom: 1px solid color-mix(in srgb, var(--rule) 86%, transparent);
-  background: color-mix(in srgb, var(--canvas) 94%, transparent);
+  border-bottom: 0;
+  background: color-mix(in srgb, var(--canvas) 88%, transparent);
   padding: max(9px, env(safe-area-inset-top)) 0 9px;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -150,15 +151,15 @@ button:active {
 
 .brand-mark {
   display: grid;
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   flex: 0 0 auto;
   place-items: center;
-  border-radius: 11px;
-  background: var(--accent);
-  color: var(--accent-ink);
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
   font-size: 12px;
-  font-weight: 760;
+  font-weight: 850;
   letter-spacing: -0.04em;
 }
 
@@ -379,7 +380,7 @@ button:active {
 .app-main {
   width: min(100%, var(--page-max));
   margin: 0 auto;
-  padding: 14px 12px 24px;
+  padding: 16px 16px 28px;
 }
 
 .tab-stage {
@@ -436,23 +437,28 @@ button:active {
 }
 
 .today-decision {
-  padding: 16px;
+  padding: 4px 4px 0;
+  background: transparent;
+  color: var(--ink);
+  border-color: transparent;
+  border: 0;
 }
 
 .today-kicker {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px 12px;
   color: var(--ink-secondary);
-  font-size: 11px;
+  font-size: 12px;
+  flex-wrap: wrap;
 }
 
 .today-kicker > span:first-child {
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .today-date-actions {
@@ -554,8 +560,8 @@ button:active {
   display: grid;
   align-items: start;
   justify-items: start;
-  gap: 3px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .decision-status-row {
@@ -572,7 +578,7 @@ button:active {
   align-items: center;
   gap: 5px;
   color: var(--accent);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 670;
 }
 
@@ -583,10 +589,11 @@ button:active {
 .decision-title-row h1 {
   min-width: 0;
   margin: 0;
-  font-size: clamp(27px, 8vw, 36px);
-  font-weight: 700;
-  letter-spacing: -0.055em;
-  line-height: 1.05;
+  font-size: clamp(30px, 8vw, 40px);
+  font-weight: 740;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  text-wrap: balance;
 }
 
 .decision-session-mode {
@@ -642,7 +649,8 @@ button:active {
 
 .training-schedule-backdrop {
   position: fixed;
-  inset: 0;
+  inset: var(--dialog-viewport-top, 0px) 0 auto;
+  height: var(--dialog-viewport-height, 100dvh);
   z-index: 80;
   display: grid;
   place-items: end center;
@@ -653,12 +661,12 @@ button:active {
 .training-schedule-sheet {
   display: grid;
   width: min(100%, 620px);
-  max-height: 92dvh;
+  max-height: 100%;
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid var(--rule);
   border-bottom: 0;
-  border-radius: 18px 18px 0 0;
+  border-radius: 24px 24px 0 0;
   background: var(--canvas-elevated);
   box-shadow: 0 -18px 52px rgb(0 0 0 / 0.22);
 }
@@ -856,8 +864,8 @@ button:active {
   border-bottom: 1px solid var(--rule);
   background: var(--surface-muted);
   color: var(--accent);
-  padding: 4px 12px;
-  font-size: 11px;
+  padding: 8px 18px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -880,8 +888,8 @@ button:active {
   align-content: center;
   align-items: center;
   column-gap: 10px;
-  row-gap: 2px;
-  padding: 6px 12px;
+  row-gap: 8px;
+  padding: 14px 18px;
   list-style: none;
 }
 
@@ -935,9 +943,9 @@ button:active {
   display: -webkit-box;
   overflow: hidden;
   min-width: 0;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 650;
-  line-height: 1.25;
+  line-height: 1.4;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -972,45 +980,45 @@ button:active {
 .course-prescription {
   grid-area: prescription;
   align-self: center;
-  overflow: hidden;
+  overflow: visible;
   min-width: 0;
   font-family:
     var(--font-geist-mono),
     ui-monospace,
     monospace;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .course-load {
   grid-area: load;
   align-self: center;
-  overflow: hidden;
+  overflow: visible;
   min-width: 0;
   color: var(--ink-secondary);
-  font-size: 11px;
+  font-size: 13px;
   text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .course-effort {
   grid-area: effort;
   align-self: center;
-  overflow: hidden;
+  overflow: visible;
   min-width: 0;
   color: var(--ink-secondary);
   font-family:
     var(--font-geist-mono),
     ui-monospace,
     monospace;
-  font-size: 11px;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .course-notice {
@@ -1254,7 +1262,8 @@ button:active {
 
 .training-exercise-backdrop {
   position: fixed;
-  inset: 0;
+  inset: var(--dialog-viewport-top, 0px) 0 auto;
+  height: var(--dialog-viewport-height, 100dvh);
   z-index: 96;
   display: grid;
   place-items: end center;
@@ -1266,12 +1275,12 @@ button:active {
 .training-exercise-dialog {
   display: grid;
   width: min(100%, 560px);
-  max-height: 92dvh;
+  max-height: 100%;
   grid-template-rows: auto minmax(0, 1fr) auto;
   overflow: hidden;
   border: 1px solid var(--rule);
   border-bottom: 0;
-  border-radius: 18px 18px 0 0;
+  border-radius: 24px 24px 0 0;
   background: var(--canvas-elevated);
   box-shadow: 0 -18px 52px rgb(0 0 0 / 0.22);
   animation: training-exercise-rise 200ms ease-out;
@@ -1520,7 +1529,10 @@ button:active {
 }
 
 .progress-summary {
-  padding: 16px;
+  padding: 4px 4px 8px;
+  border-color: transparent;
+  background: transparent;
+  border: 0;
 }
 
 .progress-summary > span {
@@ -1530,12 +1542,13 @@ button:active {
 }
 
 .progress-summary h1 {
-  max-width: 22ch;
-  margin: 4px 0 14px;
-  font-size: clamp(23px, 7vw, 31px);
+  max-width: 28ch;
+  margin: 8px 0 16px;
+  font-size: clamp(24px, 6vw, 32px);
   font-weight: 700;
   letter-spacing: -0.045em;
-  line-height: 1.12;
+  line-height: 1.2;
+  text-wrap: balance;
 }
 
 .progress-metrics {
@@ -1543,7 +1556,7 @@ button:active {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0;
   border-top: 1px solid var(--rule);
-  padding-top: 11px;
+  padding-top: 14px;
 }
 
 .progress-metrics > div {
@@ -1559,28 +1572,31 @@ button:active {
 }
 
 .progress-metrics span {
-  overflow: hidden;
+  overflow: visible;
   color: var(--ink-secondary);
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 13px;
+  text-overflow: clip;
+  white-space: normal;
+  line-height: 1.45;
 }
 
 .progress-metrics strong {
-  overflow: hidden;
-  font-size: 14px;
+  overflow: visible;
+  font-size: 19px;
   font-weight: 680;
   font-variant-numeric: tabular-nums;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  white-space: normal;
+  line-height: 1.45;
 }
 
 .progress-metrics small {
-  overflow: hidden;
+  overflow: visible;
   color: var(--ink-tertiary);
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 12px;
+  text-overflow: clip;
+  white-space: normal;
+  line-height: 1.45;
 }
 
 .progress-metrics .metric-positive {
@@ -1592,14 +1608,15 @@ button:active {
 }
 
 .chart-panel {
-  padding: 12px;
+  padding: 16px;
 }
 
 .chart-controls {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .segmented-control,
@@ -1664,7 +1681,7 @@ button:active {
 }
 
 .chart-summary strong {
-  font-size: 22px;
+  font-size: 30px;
   font-weight: 690;
   letter-spacing: -0.04em;
   font-variant-numeric: tabular-nums;
@@ -1780,10 +1797,10 @@ button:active {
 }
 
 .chart-footer span:nth-child(2) {
-  overflow: hidden;
+  overflow: visible;
   text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  white-space: normal;
 }
 
 .chart-empty {
@@ -1797,7 +1814,9 @@ button:active {
 }
 
 .agent-insights {
-  padding: 13px 14px;
+  padding: 16px;
+  border: 0;
+  background: transparent;
 }
 
 .insight-heading {
@@ -1816,12 +1835,12 @@ button:active {
 
 .agent-insights ul {
   display: grid;
-  gap: 5px;
+  gap: 8px;
   margin: 9px 0 0;
   padding-left: 17px;
   color: var(--ink-secondary);
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .empty-panel {
@@ -1862,7 +1881,7 @@ button:active {
 
 .nutrition-view {
   display: grid;
-  gap: 11px;
+  gap: 12px;
 }
 
 .nutrition-summary,
@@ -2007,14 +2026,16 @@ button:active {
 }
 
 .nutrition-summary {
-  padding: 16px;
+  padding: 18px;
+  background: var(--surface);
 }
 
 .nutrition-summary-top {
-  display: flex;
-  align-items: end;
+  display: grid;
+  align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 6px;
+  grid-template-columns: 1fr;
 }
 
 .nutrition-summary-top > div:first-child {
@@ -2024,15 +2045,15 @@ button:active {
 
 .nutrition-summary-top span {
   color: var(--ink-secondary);
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .nutrition-summary-top > div:first-child > strong {
   color: var(--ink);
-  font-size: clamp(27px, 8vw, 36px);
+  font-size: 34px;
   font-weight: 720;
-  letter-spacing: -0.055em;
-  line-height: 1.05;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
   font-variant-numeric: tabular-nums;
 }
 
@@ -2040,7 +2061,9 @@ button:active {
   display: grid;
   flex: 0 0 auto;
   gap: 2px;
-  text-align: right;
+  text-align: left;
+  grid-column: 1 / -1;
+  margin-top: 0;
 }
 
 .nutrition-target-note small {
@@ -2052,52 +2075,58 @@ button:active {
 .nutrition-key-metrics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 14px;
+  margin-top: 16px;
   border-top: 1px solid var(--rule);
-  padding-top: 11px;
+  padding-top: 14px;
+  gap: 14px;
 }
 
 .nutrition-key-metrics > div {
   display: grid;
   min-width: 0;
-  gap: 2px;
+  gap: 4px;
   padding-right: 8px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
 }
 
 .nutrition-key-metrics > div + div {
-  border-left: 1px solid var(--rule);
-  padding-left: 9px;
+  border-left: 0;
+  padding-left: 0;
 }
 
 .nutrition-key-metrics span,
 .nutrition-key-metrics small {
-  overflow: hidden;
+  overflow: visible;
   color: var(--ink-secondary);
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 12px;
+  text-overflow: clip;
+  white-space: normal;
+  line-height: 1.4;
 }
 
 .nutrition-key-metrics span {
-  min-height: 2.35em;
-  line-height: 1.18;
+  min-height: 0;
+  line-height: 1.5;
   text-overflow: clip;
   white-space: normal;
 }
 
 .nutrition-key-metrics strong {
-  overflow: hidden;
-  font-size: 14px;
+  overflow: visible;
+  font-size: 16px;
   font-weight: 680;
   font-variant-numeric: tabular-nums;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: clip;
+  white-space: normal;
+  line-height: 1.4;
 }
 
 .nutrition-basis {
-  margin-top: 10px;
+  margin-top: 12px;
   border-top: 1px solid var(--rule);
-  padding-top: 8px;
+  padding-top: 2px;
 }
 
 .nutrition-basis summary,
@@ -2392,11 +2421,12 @@ button:active {
 }
 
 .field-block > small {
-  overflow: hidden;
+  overflow: visible;
   color: var(--ink-tertiary);
-  font-size: 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 12px;
+  text-overflow: clip;
+  white-space: normal;
+  line-height: 1.5;
 }
 
 .field-block input,
@@ -2511,7 +2541,7 @@ button:active {
 .primary-button,
 .secondary-button {
   display: inline-flex;
-  min-height: 44px;
+  min-height: 48px;
   align-items: center;
   justify-content: center;
   gap: 5px;
@@ -2519,8 +2549,8 @@ button:active {
   border-radius: var(--radius-control);
   background: var(--accent);
   color: var(--accent-ink);
-  padding: 0 13px;
-  font-size: 12px;
+  padding: 0 18px;
+  font-size: 14px;
   font-weight: 680;
   white-space: nowrap;
   cursor: pointer;
@@ -3794,7 +3824,7 @@ button:active {
   gap: 14px;
   border: 1px solid var(--rule);
   border-bottom: 0;
-  border-radius: 18px 18px 0 0;
+  border-radius: 24px 24px 0 0;
   background: var(--canvas-elevated);
   box-shadow: 0 -18px 52px rgb(0 0 0 / 0.22);
   padding: 19px 16px max(16px, env(safe-area-inset-bottom));
@@ -3840,7 +3870,7 @@ button:active {
 .nutrition-undo-toast {
   position: fixed;
   right: 12px;
-  bottom: calc(76px + env(safe-area-inset-bottom));
+  bottom: calc(96px + env(safe-area-inset-bottom));
   left: 12px;
   z-index: 70;
   display: grid;
@@ -3877,7 +3907,8 @@ button:active {
 
 .nutrition-dialog-backdrop {
   position: fixed;
-  inset: 0;
+  inset: var(--dialog-viewport-top, 0px) 0 auto;
+  height: var(--dialog-viewport-height, 100dvh);
   z-index: 80;
   display: grid;
   place-items: end center;
@@ -3890,12 +3921,13 @@ button:active {
   width: min(100%, 620px);
   min-width: 0;
   max-width: 100%;
-  max-height: 92dvh;
+  height: 100%;
+  max-height: 100%;
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid var(--rule);
   border-bottom: 0;
-  border-radius: 18px 18px 0 0;
+  border-radius: 24px 24px 0 0;
   background: var(--canvas-elevated);
   box-shadow: 0 -18px 52px rgb(0 0 0 / 0.22);
 }
@@ -3964,6 +3996,57 @@ button:active {
 .combo-editor {
   display: grid;
   gap: 13px;
+}
+
+.quick-record-search {
+  position: sticky;
+  top: -14px;
+  z-index: 1;
+  background: var(--canvas-elevated);
+  padding-block: 8px;
+}
+
+.food-result-content,
+.food-nutrient-summary {
+  display: grid;
+  min-width: 0;
+  width: 100%;
+  gap: 5px;
+}
+
+.food-result-content > strong {
+  font-size: 13px;
+  font-weight: 660;
+  overflow-wrap: anywhere;
+}
+
+.food-nutrient-basis {
+  color: var(--ink-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.food-nutrient-macros {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.food-nutrient-macros > span {
+  display: grid;
+  align-content: start;
+  min-width: 0;
+  gap: 2px;
+  color: var(--ink-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.food-nutrient-macros > span > span:last-child {
+  color: var(--ink);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
 }
 
 .quick-record-section {
@@ -4525,7 +4608,8 @@ button:active {
 
 .library-backdrop {
   position: fixed;
-  inset: 0;
+  inset: var(--dialog-viewport-top, 0px) 0 auto;
+  height: var(--dialog-viewport-height, 100dvh);
   z-index: 80;
   display: grid;
   place-items: end center;
@@ -4536,12 +4620,13 @@ button:active {
 .food-library {
   display: grid;
   width: min(100%, 760px);
-  max-height: 92dvh;
+  height: 100%;
+  max-height: 100%;
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid var(--rule);
   border-bottom: 0;
-  border-radius: 18px 18px 0 0;
+  border-radius: 24px 24px 0 0;
   background: var(--canvas-elevated);
   box-shadow: 0 -18px 52px rgb(0 0 0 / 0.22);
 }
@@ -4585,10 +4670,9 @@ button:active {
 }
 
 .library-body {
-  display: grid;
   min-height: 0;
-  grid-template-rows: clamp(260px, 38dvh, 320px) minmax(0, 1fr);
-  overflow: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .library-body aside {
@@ -4618,6 +4702,7 @@ button:active {
 .library-list {
   display: grid;
   min-height: 0;
+  max-height: 240px;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -4646,7 +4731,7 @@ button:active {
   color: var(--accent);
 }
 
-.library-list span {
+.library-list > button > span:not(.food-result-content) {
   overflow: hidden;
   font-size: 12px;
   font-weight: 620;
@@ -4662,8 +4747,7 @@ button:active {
 
 .food-editor {
   min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: visible;
   overscroll-behavior: contain;
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
@@ -4715,7 +4799,7 @@ button:active {
 
 .log-view {
   display: grid;
-  gap: 11px;
+  gap: 12px;
 }
 
 .log-page-header {
@@ -4734,15 +4818,15 @@ button:active {
 
 .log-page-header h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 740;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.025em;
 }
 
 .log-page-header p {
-  margin: 0;
+  margin: 6px 0 0;
   color: var(--ink-secondary);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .log-add-button,
@@ -4849,11 +4933,12 @@ button:active {
   border: 1px solid var(--rule);
   border-radius: var(--radius-panel);
   background: var(--surface);
-  box-shadow: var(--shadow);
+  box-shadow: none;
 }
 
 .log-record-list {
   display: grid;
+  gap: 0;
 }
 
 .log-record-row {
@@ -4861,7 +4946,9 @@ button:active {
   grid-template-columns: 38px minmax(0, 1fr);
   gap: 11px;
   border-bottom: 1px solid var(--rule);
-  padding: 13px 14px;
+  padding: 16px;
+  border-radius: 0;
+  background: transparent;
 }
 
 .log-record-row:last-child {
@@ -4880,6 +4967,7 @@ button:active {
 .log-record-icon {
   width: 38px;
   height: 38px;
+  border-radius: 50%;
 }
 
 .log-record-content {
@@ -5030,7 +5118,8 @@ button:active {
 
 .log-sheet-backdrop {
   position: fixed;
-  inset: 0;
+  inset: var(--dialog-viewport-top, 0px) 0 auto;
+  height: var(--dialog-viewport-height, 100dvh);
   z-index: 80;
   display: grid;
   place-items: end center;
@@ -5041,12 +5130,13 @@ button:active {
 .log-sheet {
   display: grid;
   width: min(100%, 620px);
-  max-height: 92dvh;
+  height: 100%;
+  max-height: 100%;
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
   border: 1px solid var(--rule);
   border-bottom: 0;
-  border-radius: 18px 18px 0 0;
+  border-radius: 24px 24px 0 0;
   background: var(--canvas-elevated);
   box-shadow: 0 -18px 52px rgb(0 0 0 / 0.22);
 }
@@ -5308,45 +5398,47 @@ button:active {
   z-index: 30;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  min-height: calc(64px + env(safe-area-inset-bottom));
+  min-height: calc(62px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--rule);
-  background: color-mix(in srgb, var(--canvas-elevated) 96%, transparent);
-  padding:
-    5px
-    max(8px, env(safe-area-inset-right))
-    max(5px, env(safe-area-inset-bottom))
-    max(8px, env(safe-area-inset-left));
+  background: var(--surface);
+  padding: 4px max(8px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  isolation: isolate;
 }
 
 .mobile-nav button {
   display: grid;
   min-width: 0;
-  min-height: 52px;
+  min-height: 54px;
   place-items: center;
   align-content: center;
-  gap: 2px;
+  gap: 4px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 12px;
   background: transparent;
-  color: var(--ink-tertiary);
+  color: var(--ink-secondary);
   cursor: pointer;
+  position: relative;
+  z-index: 1;
 }
 
 .mobile-nav button.is-active {
-  background: var(--accent-soft);
+  background: transparent;
   color: var(--accent);
 }
 
 .mobile-nav span {
-  font-size: 10px;
-  font-weight: 640;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .tab-panel.is-active {
-    animation: tab-panel-in 140ms cubic-bezier(0.2, 0.72, 0.24, 1) both;
+    animation: tab-panel-in 180ms var(--motion-ease);
   }
 
   .desktop-nav button,
@@ -5360,10 +5452,168 @@ button:active {
 
 @keyframes tab-panel-in {
   from {
-    opacity: 0.94;
-    transform: translateY(2px);
+    opacity: 0;
+    transform: translateY(5px);
   }
 }
+
+.today-decision .duration,
+.today-decision .decision-status,
+.today-decision .health-briefing,
+.today-decision .training-schedule-menu-trigger {
+  color: var(--ink-secondary);
+}
+
+.today-decision .decision-status-watch {
+  color: var(--watch);
+}
+
+.today-decision .health-briefing {
+  border-color: rgb(41 59 24 / 0.16);
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 14px 0 0;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.today-decision .health-briefing li {
+  color: var(--ink-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.today-decision .health-briefing li::before {
+  background: currentColor;
+}
+
+.nutrition-page-heading {
+  display: grid;
+  gap: 4px;
+  padding: 0 4px 2px;
+}
+
+.nutrition-page-heading h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 740;
+  letter-spacing: -0.025em;
+}
+
+.nutrition-page-heading > span {
+  font-size: 13px;
+  color: var(--ink-secondary);
+}
+
+.nutrition-day-status {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 550;
+  color: var(--ink-secondary);
+  line-height: 1.4;
+}
+
+.chart-scale line {
+  stroke: var(--rule);
+  stroke-width: 0.7;
+  stroke-dasharray: 2 4;
+}
+
+.chart-scale text {
+  fill: var(--ink-secondary);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 679px) {
+  .progress-metrics {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .progress-metrics > div {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 4px 12px;
+    padding: 0;
+  }
+
+  .progress-metrics > div + div {
+    padding: 12px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .progress-metrics small { grid-column: 1 / -1; }
+
+  .chart-footer {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 10px;
+  }
+
+  .chart-footer span:nth-child(2) {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .chart-footer span:last-child { text-align: right; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  button,
+  summary,
+  input,
+  select,
+  textarea {
+    transition: background-color 180ms ease, border-color 180ms ease,
+      color 180ms ease, box-shadow 180ms ease, transform 160ms var(--motion-ease);
+  }
+
+  button:not(:disabled):active { transform: scale(0.97); }
+
+  .nutrition-sheet,
+  .food-library,
+  .training-schedule-sheet {
+    animation: panel-arrive 260ms var(--motion-ease);
+  }
+
+  .nutrition-dialog-backdrop,
+  .library-backdrop,
+  .training-schedule-backdrop {
+    animation: training-exercise-fade 180ms ease-out;
+  }
+
+  .nutrition-success,
+  .log-success,
+  .nutrition-undo-toast {
+    animation: panel-arrive 220ms var(--motion-ease);
+  }
+
+  .course-row[open] .course-row-detail,
+  .nutrition-basis[open] > p,
+  .course-rationale[open] > p {
+    animation: tab-panel-in 220ms var(--motion-ease);
+  }
+
+  .chart-line {
+    stroke-dasharray: 1;
+    animation: chart-reveal 400ms var(--motion-ease);
+  }
+
+}
+
+@keyframes panel-arrive {
+  from { opacity: 0; transform: translateY(20px) scale(0.985); }
+}
+
+@keyframes chart-reveal {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
 
 .skeleton {
   overflow: hidden;
@@ -5412,9 +5662,12 @@ button:active {
     padding: 20px 18px 32px;
   }
 
-  .today-decision,
+  .today-decision {
+    padding: 8px 4px 0;
+  }
+
   .progress-summary {
-    padding: 20px;
+    padding: 8px 4px 12px;
   }
 
   .course-heading {
@@ -5505,7 +5758,7 @@ button:active {
   }
 
   .training-exercise-dialog {
-    max-height: min(720px, 90dvh);
+    max-height: min(720px, 100%);
     border-bottom: 1px solid var(--rule);
     border-radius: 18px;
   }
@@ -5515,7 +5768,7 @@ button:active {
   }
 
   .nutrition-summary {
-    padding: 18px;
+    padding: 22px;
   }
 
   .manual-tools-body {
@@ -5556,7 +5809,7 @@ button:active {
   }
 
   .nutrition-sheet {
-    max-height: min(760px, 88dvh);
+    max-height: min(760px, 100%);
     border-bottom: 1px solid var(--rule);
     border-radius: 18px;
   }
@@ -5577,7 +5830,7 @@ button:active {
   }
 
   .log-sheet {
-    max-height: min(760px, 88dvh);
+    max-height: min(760px, 100%);
     border-bottom: 1px solid var(--rule);
     border-radius: 18px;
   }
@@ -5599,14 +5852,25 @@ button:active {
   }
 
   .food-library {
-    max-height: min(760px, 88dvh);
+    max-height: min(760px, 100%);
     border-bottom: 1px solid var(--rule);
     border-radius: 18px;
   }
 
   .library-body {
-    grid-template-columns: 220px minmax(0, 1fr);
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: 260px minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
+  }
+
+  .library-list {
+    max-height: none;
+  }
+
+  .food-editor {
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .library-body aside {
@@ -5614,16 +5878,7 @@ button:active {
     border-bottom: 0;
   }
 
-  .mobile-nav {
-    right: 50%;
-    left: auto;
-    width: 330px;
-    transform: translateX(50%);
-    border: 1px solid var(--rule);
-    border-bottom: 0;
-    border-radius: 16px 16px 0 0;
-    box-shadow: var(--shadow);
-  }
+
 }
 
 @media (min-width: 800px) {
@@ -5695,10 +5950,6 @@ button:active {
     padding-inline: 5px;
   }
 
-  .nutrition-key-metrics strong {
-    font-size: 12px;
-  }
-
   .nutrition-summary-top {
     align-items: start;
   }
@@ -5714,7 +5965,7 @@ button:active {
   }
 
   .nutrition-target-note {
-    margin-top: 22px;
+    margin-top: 0;
   }
 
   .energy-input-row {

@@ -36,6 +36,7 @@ import {
   calculateNutrientPreview,
 } from "@/lib/nutrition-preview";
 import {
+  FoodNutrientSummary,
   NutritionDetailPreview,
   NutritionMacroStrip,
 } from "@/components/nutrition/NutritionPreview";
@@ -183,20 +184,6 @@ function quantityText(value: number) {
   return Number.isInteger(value)
     ? String(value)
     : value.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
-}
-
-function numberLabel(
-  value: number | null,
-  unit: string,
-  formatNumber: ReturnType<typeof useI18n>["formatNumber"],
-  noData: string,
-  digits = 0,
-) {
-  if (value === null) return noData;
-  return `${formatNumber(value, {
-    maximumFractionDigits: digits,
-    minimumFractionDigits: digits,
-  })} ${unit}`;
 }
 
 function defaultComboPreview(combo: NutritionCombo) {
@@ -1064,7 +1051,7 @@ export function NutritionQuickRecord({
                     </select>
                   </label>
 
-                  <label className="field-block">
+                  <label className="field-block quick-record-search">
                     <span>{t("nutrition.action.search")}</span>
                     <span className="search-input-wrap">
                       <MagnifyingGlass size={17} aria-hidden="true" />
@@ -1127,9 +1114,7 @@ export function NutritionQuickRecord({
                       </header>
                       {foodResults.length ? (
                         <div className="quick-record-list">
-                          {foodResults.slice(0, 30).map((food) => {
-                            const measure = displayMeasure(food.baseQuantity, food.defaultUnit);
-                            return (
+                          {foodResults.slice(0, 30).map((food) => (
                               <button
                                 type="button"
                                 className="quick-record-row"
@@ -1138,20 +1123,11 @@ export function NutritionQuickRecord({
                               >
                                 <span>
                                   <strong>{food.displayName}</strong>
-                                  <small>
-                                    {numberLabel(
-                                      food.nutrients.energyKcal,
-                                      "kcal",
-                                      formatNumber,
-                                      t("nutrition.value.noRecord"),
-                                    )}{" "}
-                                    / {quantityText(measure.quantity)} {measure.unit}
-                                  </small>
+                                  <FoodNutrientSummary food={food} />
                                 </span>
                                 <Plus size={17} aria-hidden="true" />
                               </button>
-                            );
-                          })}
+                          ))}
                         </div>
                       ) : (
                         <p className="quick-record-empty">
@@ -1488,7 +1464,10 @@ export function NutritionQuickRecord({
                     <div className="combo-food-results">
                       {editorFoodResults.slice(0, 20).map((food) => (
                         <button type="button" key={food.foodId} onClick={() => addEditorFood(food)} disabled={comboEditor.items.some((item) => item.foodId === food.foodId)}>
-                          <span>{food.displayName}</span>
+                          <span className="food-result-content">
+                            <strong>{food.displayName}</strong>
+                            <FoodNutrientSummary food={food} />
+                          </span>
                           <Plus size={15} aria-hidden="true" />
                         </button>
                       ))}

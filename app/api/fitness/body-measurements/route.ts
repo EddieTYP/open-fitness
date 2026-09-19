@@ -1,10 +1,11 @@
 import { getDb } from "@/db";
-import { auditLog, bodyMeasurements } from "@/db/schema";
+import { auditLog, bodyMeasurements, corrections } from "@/db/schema";
 import { and, asc, desc, eq, gte, lt, lte, sql } from "drizzle-orm";
 import {
   getApiActor,
   routeError,
   unauthorizedResponse,
+  type ApiActor,
 } from "@/lib/api-auth";
 import { apiError } from "@/lib/api-error";
 import {
@@ -18,6 +19,9 @@ import { getProfileTimezone } from "@/lib/profile-timezone";
 import { localDateFromTimestamp } from "@/lib/timezone.mjs";
 
 export const dynamic = "force-dynamic";
+
+// The local SQLite adapter must not open overlapping write transactions.
+let measurementWriteInFlight = false;
 
 type BodyMeasurementInput = {
   measurementId?: string;
@@ -234,6 +238,143 @@ const enrichmentNumberFields = {
   bodyFatTrunkPct: { min: 0, max: 100 },
 } as const;
 
+const correctionNumberFields = {
+  weightKg: { min: 20, max: 350 },
+  bmi: { min: 5, max: 80 },
+  bodyFatPct: { min: 0, max: 100 },
+  visceralFatRating: { min: 0, max: 100 },
+  muscleMassKg: { min: 0, max: 250 },
+  boneMassKg: { min: 0, max: 20 },
+  metabolicAgeYears: { min: 1, max: 150 },
+  bodyWaterPct: { min: 0, max: 100 },
+  physiqueRating: { min: 1, max: 9 },
+  heartRateBpm: { min: 0, max: 250 },
+  ...enrichmentNumberFields,
+} as const;
+
+type MeasurementSnapshot = {
+  measurement: ReturnType<typeof measurementResponse>;
+  revision: string;
+};
+
+async function latestMeasurementCorrection(
+  db: Pick<ReturnType<typeof getDb>, "select">,
+  measurementId: string,
+) {
+  const rows = await db.select().from(corrections).where(and(
+    eq(corrections.targetScope, "body_measurement"),
+    eq(corrections.targetKey, measurementId),
+    eq(corrections.fieldName, "measurement"),
+  )).orderBy(desc(corrections.recordedAt)).limit(1);
+  return rows[0] ?? null;
+}
+
+function measurementRevision(
+  measurement: ReturnType<typeof measurementResponse>,
+  correctionId: string | null,
+) {
+  return payloadSha256({ measurement, correctionId });
+}
+
+async function correctMeasurement(
+  request: Request,
+  payload: Record<string, unknown>,
+  actor: ApiActor,
+) {
+  const allowed = new Set(["action", "measurementId", "expectedRevision", "reason", "values"]);
+  const { measurementId, expectedRevision, reason, values: rawValues } = payload;
+  if (
+    Object.keys(payload).some((key) => !allowed.has(key)) ||
+    typeof measurementId !== "string" || !measurementId.trim() ||
+    typeof expectedRevision !== "string" || !/^[a-f0-9]{64}$/.test(expectedRevision) ||
+    typeof reason !== "string" || !reason.trim() ||
+    !rawValues || typeof rawValues !== "object" || Array.isArray(rawValues) ||
+    !Object.keys(rawValues).length
+  ) {
+    return apiError("INVALID_BODY_MEASUREMENT_CORRECTION", 400);
+  }
+  const id = measurementId.trim();
+  const values: Partial<Record<keyof typeof correctionNumberFields, number | null>> = {};
+  for (const [field, value] of Object.entries(rawValues)) {
+    if (!Object.prototype.hasOwnProperty.call(correctionNumberFields, field)) {
+      return apiError("INVALID_BODY_MEASUREMENT_CORRECTION", 400, { field });
+    }
+    const key = field as keyof typeof correctionNumberFields;
+    const range = correctionNumberFields[key];
+    if (
+      value === null ? key === "weightKg" :
+      typeof value !== "number" || !Number.isFinite(value) || value < range.min || value > range.max
+    ) {
+      return apiError("INVALID_BODY_MEASUREMENT_CORRECTION", 400, { field });
+    }
+    values[key] = value as number | null;
+  }
+  const idempotencyKey = request.headers.get("x-idempotency-key")?.trim();
+  if (!idempotencyKey || !/^[A-Za-z0-9._:-]{8,200}$/.test(idempotencyKey)) {
+    return apiError("IDEMPOTENCY_KEY_REQUIRED", 400);
+  }
+  const digest = await payloadSha256(payload);
+  const correctionId = `BODY-CORRECTION|${idempotencyKey}`;
+  const timezone = await getProfileTimezone();
+  const stored = await getDb().transaction(async (tx) => {
+    const replayedId = await findIdempotentReplay(idempotencyKey, "body_measurement", digest, tx);
+    if (replayedId) {
+      const rows = await tx.select().from(corrections)
+        .where(eq(corrections.correctionId, correctionId)).limit(1);
+      if (!rows[0]?.correctedValue || replayedId !== id) {
+        throw new Error("Body measurement correction receipt is unavailable");
+      }
+      return { ...JSON.parse(rows[0].correctedValue) as MeasurementSnapshot, replay: true };
+    }
+    const rows = await tx.select().from(bodyMeasurements)
+      .where(eq(bodyMeasurements.measurementId, id)).limit(1);
+    const current = rows[0];
+    if (!current) return null;
+    const latest = await latestMeasurementCorrection(tx, id);
+    const before = measurementResponse(current);
+    const revision = await measurementRevision(before, latest?.correctionId ?? null);
+    if (revision !== expectedRevision) throw new Error("BODY_MEASUREMENT_REVISION_CONFLICT");
+    const weightKg = values.weightKg ?? current.weightKg;
+    const bodyFatPct = values.bodyFatPct === undefined ? current.bodyFatPct : values.bodyFatPct;
+    const updated = await tx.update(bodyMeasurements).set({
+      ...values,
+      weightKg,
+      fatMassKg: bodyFatPct === null ? null : rounded(weightKg * (bodyFatPct / 100)),
+      estimatedFatFreeMassKg: bodyFatPct === null ? null : rounded(weightKg * (1 - bodyFatPct / 100)),
+    }).where(eq(bodyMeasurements.measurementId, id)).returning();
+    const measurement = measurementResponse(updated[0]);
+    const result: MeasurementSnapshot = {
+      measurement,
+      revision: await measurementRevision(measurement, correctionId),
+    };
+    // Keep the existing correction table's timestamp natural key monotonic.
+    const recordedAt = new Date(Math.max(Date.now(), latest ? Date.parse(latest.recordedAt) + 1 : 0)).toISOString();
+    await tx.insert(corrections).values({
+      correctionId,
+      effectiveDate: current.localDate ?? localDateFromTimestamp(current.measuredAt, timezone),
+      targetScope: "body_measurement",
+      targetKey: id,
+      fieldName: "measurement",
+      originalValue: JSON.stringify({ measurement: before, revision }),
+      correctedValue: JSON.stringify(result),
+      reason: reason.trim(),
+      source: actor.id,
+      recordedAt,
+    });
+    await tx.insert(auditLog).values({
+      requestId: idempotencyKey,
+      actor: actor.id,
+      operation: "correct",
+      entityType: "body_measurement",
+      entityId: id,
+      payloadSha256: digest,
+    });
+    return { ...result, replay: false };
+  });
+  if (!stored) return apiError("BODY_MEASUREMENT_NOT_FOUND", 404, { measurementId: id });
+  return Response.json({ ...stored, correctionId, requestId: idempotencyKey });
+}
+
 function measurementConflict(field: string) {
   return apiError(
     "BODY_MEASUREMENT_CONFLICT",
@@ -271,20 +412,44 @@ export async function GET(request: Request) {
         "Body measurement not found",
       );
     }
+    const measurement = measurementResponse(rows[0]);
+    const latestCorrection = await latestMeasurementCorrection(getDb(), measurementId);
     return Response.json({
-      measurement: measurementResponse(rows[0]),
+      measurement,
+      revision: await measurementRevision(measurement, latestCorrection?.correctionId ?? null),
+      latestCorrection: latestCorrection ? {
+        correctionId: latestCorrection.correctionId,
+        reason: latestCorrection.reason,
+        recordedAt: latestCorrection.recordedAt,
+        before: JSON.parse(latestCorrection.originalValue!) as MeasurementSnapshot,
+        after: JSON.parse(latestCorrection.correctedValue!) as MeasurementSnapshot,
+      } : null,
       trend: await measurementTrend(rows[0]),
-    });
+    }, { headers: { "cache-control": "no-store" } });
   } catch (error) {
     return routeError(error);
   }
 }
 
 export async function PATCH(request: Request) {
+  let ownsWrite = false;
   try {
     const actor = await getApiActor(request);
     if (!actor) return unauthorizedResponse();
-    const payload = (await request.json()) as BodyMeasurementEnrichmentInput;
+    if (measurementWriteInFlight) return apiError("BODY_MEASUREMENT_WRITE_CONFLICT", 409);
+    measurementWriteInFlight = true;
+    ownsWrite = true;
+    const rawPayload = await request.json();
+    if (!rawPayload || typeof rawPayload !== "object" || Array.isArray(rawPayload)) {
+      return apiError("INVALID_BODY_MEASUREMENT_ENRICHMENT", 400);
+    }
+    if (rawPayload.action === "correct") {
+      return await correctMeasurement(request, rawPayload, actor);
+    }
+    if (rawPayload.action !== undefined && rawPayload.action !== "enrich") {
+      return apiError("INVALID_BODY_MEASUREMENT_ACTION", 400);
+    }
+    const payload = rawPayload as BodyMeasurementEnrichmentInput;
     const measurementId = payload.measurementId?.trim();
     const expectedCreatedAt = payload.expectedCreatedAt?.trim();
     const rawValues = payload.values;
@@ -415,6 +580,13 @@ export async function PATCH(request: Request) {
     });
   } catch (error) {
     if (error instanceof Error) {
+      const databaseCode = (error as Error & { code?: string }).code;
+      if (databaseCode === "SQLITE_BUSY" || databaseCode === "SQLITE_BUSY_SNAPSHOT") {
+        return apiError("BODY_MEASUREMENT_WRITE_CONFLICT", 409);
+      }
+      if (error.message === "BODY_MEASUREMENT_REVISION_CONFLICT") {
+        return apiError("BODY_MEASUREMENT_REVISION_CONFLICT", 409);
+      }
       if (error.message === "BODY_MEASUREMENT_CREATED_AT_CONFLICT") {
         return measurementConflict("createdAt");
       }
@@ -423,13 +595,19 @@ export async function PATCH(request: Request) {
       }
     }
     return routeError(error);
+  } finally {
+    if (ownsWrite) measurementWriteInFlight = false;
   }
 }
 
 export async function POST(request: Request) {
+  let ownsWrite = false;
   try {
     const actor = await getApiActor(request);
     if (!actor) return unauthorizedResponse();
+    if (measurementWriteInFlight) return apiError("BODY_MEASUREMENT_WRITE_CONFLICT", 409);
+    measurementWriteInFlight = true;
+    ownsWrite = true;
 
     const payload = (await request.json()) as BodyMeasurementInput;
     if (!isIsoTimestamp(payload.measuredAt)) {
@@ -626,5 +804,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     return routeError(error);
+  } finally {
+    if (ownsWrite) measurementWriteInFlight = false;
   }
 }

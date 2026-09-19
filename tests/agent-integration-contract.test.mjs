@@ -1721,6 +1721,7 @@ test("fitness MCP canonicalises grouped workouts and set aliases before validate
     totalTvlKgReported: 1400,
     trainingPhaseId: "synthetic-phase-push",
     sessionIntent: "normal",
+    trainingPhaseId: "leg",
     type: "Strength",
   };
 
@@ -1781,6 +1782,7 @@ test("fitness MCP canonicalises grouped workouts and set aliases before validate
       ...syntheticPushSession,
       endedAt: "2099-04-15T19:00:00+00:00",
       sessionIntent: "deload",
+      trainingPhaseId: "leg",
       sessionTitle: syntheticPushSession.title,
       sessionType: syntheticPushSession.type,
       sets: undefined,
@@ -1818,6 +1820,7 @@ test("fitness MCP canonicalises grouped workouts and set aliases before validate
       ...syntheticPushSession,
       endedAt: "2099-04-15T19:00:00+00:00",
       sessionIntent: "deload",
+      trainingPhaseId: "leg",
       totalSetsReported: 2,
       trainingBlockId: "TRAINING-BLOCK|SYNTHETIC|1",
       sets: [

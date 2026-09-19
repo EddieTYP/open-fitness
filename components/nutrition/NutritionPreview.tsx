@@ -2,6 +2,7 @@
 
 import { CaretDown } from "@phosphor-icons/react";
 import { useI18n } from "@/components/i18n/I18nProvider";
+import type { NutritionFood } from "@/lib/nutrition";
 import type {
   NutrientKey,
   NutrientPreview,
@@ -28,6 +29,35 @@ const secondaryFields: NutrientField[] = [
   { key: "sodiumMg", unit: "mg", digits: 0 },
   { key: "cholesterolMg", unit: "mg", digits: 0 },
 ];
+
+export function FoodNutrientSummary({ food }: { food: NutritionFood }) {
+  const { t, formatNumber } = useI18n();
+  const isHundredGrams = food.defaultUnit.toLowerCase() === "100g";
+  const quantity = isHundredGrams ? food.baseQuantity * 100 : food.baseQuantity;
+  const unit = isHundredGrams ? "g" : food.defaultUnit;
+  const valueLabel = (field: NutrientField) => {
+    const value = food.nutrients[field.key];
+    return value === null
+      ? t("nutrition.value.notProvided")
+      : `${formatNumber(value, { maximumFractionDigits: field.digits })} ${field.unit}`;
+  };
+
+  return (
+    <span className="food-nutrient-summary">
+      <span className="food-nutrient-basis">
+        {valueLabel(primaryFields[0])} / {formatNumber(quantity, { maximumFractionDigits: 3 })} {unit}
+      </span>
+      <span className="food-nutrient-macros">
+        {primaryFields.slice(1).map((field) => (
+          <span key={field.key}>
+            <span>{t(`nutrition.nutrient.${field.key}`)}</span>
+            <span>{valueLabel(field)}</span>
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
 
 type NumberFormatter = (
   value: number,

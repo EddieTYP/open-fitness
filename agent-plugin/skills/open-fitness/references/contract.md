@@ -342,6 +342,19 @@ or advice are needed.
   `measurementId`, `expectedCreatedAt`, and `values`; it may replace only the
   default `Manual entry` device source or the default `Open Fitness WebApp`
   source with an explicit source, and cannot overwrite other non-null values.
+  For an explicit correction, use `body_measurement_update` (PATCH on the same
+  route) with `action: "correct"`, `measurementId`, the exact current read's
+  `expectedRevision`, a non-empty `reason`, and numeric `values`. This operation
+  can replace existing values; omitted fields stay unchanged, optional fields
+  may be explicitly cleared with null, and weight cannot be null. Timestamp,
+  source and record identity are immutable. The API recalculates fat mass and
+  estimated fat-free mass, atomically stores before/after snapshots in the
+  existing corrections table, and advances the read revision. The latest
+  correction is included in exact reads for review/recovery. Restoring an old
+  value is another explicit correction using the current revision, never a
+  deletion of history. Stale revisions return 409; do not silently rebase them.
+  Idempotent replays return the original correction receipt; the connector
+  checks that it is still the current state before acknowledging success.
   BIA values are trend estimates regardless of device.
 - Supplied Active Energy uses `active_energy_create`. Current-day partial values
   are `provisional`; a complete historical daily total is `final` with

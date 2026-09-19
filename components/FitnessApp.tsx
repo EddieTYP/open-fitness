@@ -231,6 +231,10 @@ function ProgressChart({
       height,
       minimum,
       maximum,
+      ticks: [high, (high + low) / 2, low].map((value, index) => ({
+        value,
+        y: insetY + (index / 2) * usableHeight,
+      })),
       coordinates,
       path: coordinates
         .map(
@@ -328,8 +332,18 @@ function ProgressChart({
             setActiveIndex(nearestPointIndex(event));
           }}
         >
+          <g className="chart-scale" aria-hidden="true">
+            {chart.ticks.map((tick) => (
+              <g key={tick.y}>
+                <line x1="12" x2="348" y1={tick.y} y2={tick.y} />
+                <text x="348" y={tick.y - 6} textAnchor="end">
+                  {valueLabel(tick.value, detailDigits)}
+                </text>
+              </g>
+            ))}
+          </g>
           {points.length > 1 ? (
-            <path d={chart.path} className="chart-line" aria-hidden="true" />
+            <path d={chart.path} pathLength="1" className="chart-line" aria-hidden="true" />
           ) : null}
           {chart.coordinates.map((point, index) => (
             <g
@@ -1208,6 +1222,7 @@ function TodayView({
           </div>
         </div>
 
+
         <ul
           className="health-briefing"
           aria-label={t("fitness.today.briefingAria")}
@@ -1448,6 +1463,44 @@ export function FitnessApp({
     progress: 0,
     log: 0,
   });
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    const root = document.documentElement;
+    let frame = 0;
+
+    function updateDialogViewport() {
+      root.style.setProperty("--dialog-viewport-height", `${viewport!.height}px`);
+      root.style.setProperty("--dialog-viewport-top", `${viewport!.offsetTop}px`);
+    }
+
+    function resizeDialogViewport() {
+      updateDialogViewport();
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const field = document.activeElement;
+        if (
+          field instanceof HTMLElement &&
+          field.matches("input, textarea, select") &&
+          field.closest('[role="dialog"]')
+        ) {
+          field.scrollIntoView({ block: "nearest", inline: "nearest" });
+        }
+      });
+    }
+
+    updateDialogViewport();
+    viewport.addEventListener("resize", resizeDialogViewport);
+    viewport.addEventListener("scroll", updateDialogViewport);
+    return () => {
+      viewport.removeEventListener("resize", resizeDialogViewport);
+      viewport.removeEventListener("scroll", updateDialogViewport);
+      window.cancelAnimationFrame(frame);
+      root.style.removeProperty("--dialog-viewport-height");
+      root.style.removeProperty("--dialog-viewport-top");
+    };
+  }, []);
 
   const refreshDashboard = useCallback(async () => {
     const response = await fetch("/api/fitness/snapshot", {

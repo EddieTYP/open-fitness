@@ -70,6 +70,7 @@ const writeOperationDescriptors = {
     receipt: receiptWithId("sessionId", ["setsInserted"]),
     readback: workoutReadbackRequest,
     verify: verifyWorkoutCreate,
+    facts: workoutCreateFacts,
   }),
   workout_validate: writeDescriptor(
     "POST",
@@ -113,6 +114,19 @@ const writeOperationDescriptors = {
       receipt: bodyMeasurementEnrichReceipt,
       readback: bodyMeasurementReadbackRequest,
       verify: verifyBodyMeasurementEnrich,
+    },
+  ),
+  body_measurement_update: writeDescriptor(
+    "PATCH",
+    "/api/fitness/body-measurements",
+    {
+      preflight: noWritePreflight,
+      normalise: normaliseDeepStrings,
+      validate: validateBodyMeasurementUpdate,
+      receipt: bodyMeasurementUpdateReceipt,
+      readback: bodyMeasurementReadbackRequest,
+      verify: verifyBodyMeasurementUpdate,
+      facts: bodyMeasurementFacts,
     },
   ),
   session_note_create: writeDescriptor("POST", "/api/fitness/session-notes", {
@@ -277,7 +291,19 @@ const writeOperationDescriptors = {
   }),
 };
 
-const writeContractVersion = "2026-08-26.1";
+const writeContractVersion = "2026-09-19.1";
+
+const bodyMeasurementNumberFields = [
+  "weightKg", "bmi", "bodyFatPct", "visceralFatRating", "muscleMassKg",
+  "muscleQuality", "boneMassKg", "bmrKcalPerDay", "metabolicAgeYears",
+  "bodyWaterPct", "physiqueRating", "heartRateBpm",
+  "muscleMassRightArmKg", "muscleMassLeftArmKg", "muscleMassRightLegKg",
+  "muscleMassLeftLegKg", "muscleMassTrunkKg",
+  "muscleQualityRightArm", "muscleQualityLeftArm", "muscleQualityRightLeg",
+  "muscleQualityLeftLeg", "muscleQualityTrunk",
+  "bodyFatRightArmPct", "bodyFatLeftArmPct", "bodyFatRightLegPct",
+  "bodyFatLeftLegPct", "bodyFatTrunkPct",
+];
 const writeContractCards = Object.freeze({
   workout_create: contractCard({
     purpose: "Create one completed workout session.",
@@ -288,6 +314,7 @@ const writeContractCards = Object.freeze({
       startedAt: "ISO-8601 timestamp",
       durationSeconds: 3600,
       sessionIntent: "normal | deload | test",
+      trainingPhaseId: "Stable phase id from snapshot; null only for an explicitly standalone workout",
       sets: [
         {
           exercise: "Exercise name",
@@ -299,9 +326,11 @@ const writeContractCards = Object.freeze({
       ],
     },
     rules: [
+      "For Strength, explicitly provide trainingPhaseId. Match the reported workout to snapshot.dashboard.trainingSchedule.cycle by meaning and send its stable id; preserve the owner's title in their language. Use null only for an explicitly standalone workout outside the cycle. If the phase is ambiguous, ask before writing. For backdated records, choose the reported phase rather than blindly using today's nextPhase.",
       "Use notesManual only for session notes, coachNote for a set note, and setTypeManual for set classification.",
       "Grouped exercises[].exerciseName with sets[].setNumber and sets[].weightKg is accepted and canonicalised deterministically.",
       "Preserve explicit date, venue, phase, block, effort, and source wording; never invent missing values.",
+      "The verified result reports trainingPhaseId and cycleLinked. A saved standalone workout with cycleLinked=false is not evidence that a cycle phase completed.",
     ],
   }),
   workout_validate: contractCard({
@@ -313,6 +342,7 @@ const writeContractCards = Object.freeze({
       startedAt: "ISO-8601 timestamp",
       durationSeconds: 3600,
       sessionIntent: "normal | deload | test",
+      trainingPhaseId: "Stable phase id from snapshot; null only for an explicitly standalone workout",
       sets: [{ exercise: "Exercise name", setNoExercise: 1, reps: 8 }],
     },
     rules: ["A successful result is validated, not succeeded, and no mutation occurs."],
@@ -330,6 +360,10 @@ const writeContractCards = Object.freeze({
   body_measurement_create: contractCard({
     purpose: "Create one body measurement with all supplied canonical fields.",
     requiredReads: [],
+    optionalFields: {
+      numeric: bodyMeasurementNumberFields.filter((field) => field !== "weightKg"),
+      type: "Finite JSON number or null; omit values not supplied. All fields are top-level.",
+    },
     bodyTemplate: {
       measurementId: "Stable owner/source measurement ID",
       measuredAt: "ISO-8601 timestamp",
@@ -350,9 +384,30 @@ const writeContractCards = Object.freeze({
     bodyTemplate: {
       measurementId: "MEASUREMENT|...",
       expectedCreatedAt: "Exact current createdAt",
-      values: { bmrKcal: 1800 },
+      values: { bmrKcalPerDay: 1800 },
     },
     rules: ["Only fill supported missing values; never overwrite an existing non-null measurement value."],
+  }),
+  body_measurement_update: contractCard({
+    purpose: "Correct supplied numeric values on one existing body measurement, preserving its identity and correction history.",
+    requiredReads: ["body_measurement"],
+    optionalFields: {
+      numeric: bodyMeasurementNumberFields,
+      type: "Finite JSON number or null, inside values. weightKg cannot be null. Omitted fields stay unchanged.",
+    },
+    bodyTemplate: {
+      action: "correct",
+      measurementId: "Exact existing measurementId",
+      expectedRevision: "Exact revision from the current body_measurement read",
+      reason: "Owner-requested correction",
+      values: { weightKg: 84.15, bodyFatPct: 22.5 },
+    },
+    rules: [
+      "Use only for an explicit correction of the existing measurement; a separate new measurement uses body_measurement_create.",
+      "Include every supplied corrected numeric value. Do not invent values for omitted fields or create a duplicate measurement.",
+      "Preserve measuredAt, localDate, source and sourceDevice. Derived fatMassKg and estimatedFatFreeMassKg are recalculated by the API, not writable.",
+      "On a revision conflict, re-read and reconcile with the owner; never silently retry using the new revision.",
+    ],
   }),
   session_note_create: contractCard({
     purpose: "Create one dated recovery, pain, readiness, or progress note.",
@@ -496,10 +551,17 @@ const writeContractCards = Object.freeze({
     bodyTemplate: {
       mealId: "MEAL|...",
       expectedRevisionNo: 1,
-      action: "quantity | classification | append_food, or omit for full replacement",
+      items: [{ name: "One-off food", quantity: 1, unit: "serving", nutrients: { energyKcal: 100 } }],
+    },
+    bodyVariants: {
+      quantity: { mealId: "MEAL|...", expectedRevisionNo: 1, action: "quantity", mealItemId: "ITEM|...", quantity: 2, unit: "serving" },
+      classification: { mealId: "MEAL|...", expectedRevisionNo: 1, action: "classification", mealType: "breakfast" },
+      append_food: { mealId: "MEAL|...", expectedRevisionNo: 1, action: "append_food", foodId: "FOOD|...", quantity: 100, unit: "g" },
     },
     rules: [
-      "A full replacement is top-level and includes the complete items array; do not nest it under meal.",
+      "For a one-off food or estimate, use the full-replacement bodyTemplate: preserve every existing item from the exact current meal and append the new nutrient snapshot to items. The example is only one item shape, not permission to discard existing items. Nutrients describe that item's reported quantity.",
+      "append_food is only for a registered foodId; use a matching bodyVariant for quantity or classification changes. revisionReason is optional on each variant; classification also accepts contextTag and originalMealType.",
+      "A full replacement is top-level and includes the complete items array; do not nest it under meal. Preserve existing meal metadata unless explicitly changing it; do not create a reusable food for a one-off estimate.",
       "For a targeted quantity or append_food update, include unit when the reported quantity uses a different compatible unit from the stored item or food basis.",
     ],
   }),
@@ -609,12 +671,14 @@ const writeContractCards = Object.freeze({
   }),
 });
 
-function contractCard({ purpose, requiredReads, bodyTemplate, rules }) {
+function contractCard({ purpose, requiredReads, bodyTemplate, bodyVariants, optionalFields, rules }) {
   return Object.freeze({
     contractVersion: writeContractVersion,
     purpose,
     requiredReads: Object.freeze(requiredReads),
     bodyTemplate: Object.freeze(bodyTemplate),
+    ...(bodyVariants ? { bodyVariants: Object.freeze(bodyVariants) } : {}),
+    ...(optionalFields ? { optionalFields: Object.freeze(optionalFields) } : {}),
     rules: Object.freeze(rules),
     outcomes: Object.freeze([
       "succeeded: mutation completed and was authoritatively verified",
@@ -868,7 +932,9 @@ function isObject(value) {
 
 function rejectExtraKeys(value, allowed) {
   for (const key of Object.keys(value)) {
-    if (!allowed.has(key)) throw new Error(`Unsupported argument: ${key}`);
+    if (!allowed.has(key)) {
+      throw new Error(`Unsupported argument: ${key}. Allowed arguments: ${[...allowed].join(", ")}`);
+    }
   }
 }
 
@@ -1401,6 +1467,14 @@ function requiredFiniteNumber(operation, body, field) {
 
 function validateWorkoutCreate(operation, body) {
   validateReceiptBody(operation, body);
+  if (body.type === "Strength") {
+    if (!Object.prototype.hasOwnProperty.call(body, "trainingPhaseId")) {
+      throw new Error(`${operation}.trainingPhaseId is required for Strength: select the stable phase id from snapshot.dashboard.trainingSchedule.cycle, or null for an explicitly standalone workout`);
+    }
+    if (body.trainingPhaseId !== null) {
+      requiredBodyString(operation, body, "trainingPhaseId");
+    }
+  }
   for (const field of ["title", "type", "startedAt", "sessionIntent"]) {
     requiredBodyString(operation, body, field);
   }
@@ -1428,6 +1502,10 @@ function validateWorkoutUpdate(operation, body) {
 
 function validateBodyMeasurementCreate(operation, body) {
   validateReceiptBody(operation, body);
+  rejectExtraKeys(body, new Set([
+    "measurementId", "measuredAt", "source", "sourceFile", "sourceDevice",
+    ...bodyMeasurementNumberFields,
+  ]));
   for (const field of [
     "measurementId",
     "measuredAt",
@@ -1438,6 +1516,11 @@ function validateBodyMeasurementCreate(operation, body) {
   }
   rejectConflictingSourceAliases(operation, body);
   requiredFiniteNumber(operation, body, "weightKg");
+  for (const field of bodyMeasurementNumberFields) {
+    if (body[field] !== undefined && body[field] !== null) {
+      requiredFiniteNumber(operation, body, field);
+    }
+  }
 }
 
 function validateBodyMeasurementEnrich(operation, body) {
@@ -1449,6 +1532,22 @@ function validateBodyMeasurementEnrich(operation, body) {
     throw new Error(`${operation}.values must not be empty`);
   }
   rejectConflictingSourceAliases(`${operation}.values`, body.values);
+}
+
+function validateBodyMeasurementUpdate(operation, body) {
+  validateReceiptBody(operation, body);
+  rejectExtraKeys(body, new Set(["action", "measurementId", "expectedRevision", "reason", "values"]));
+  for (const field of ["measurementId", "expectedRevision", "reason"]) requiredBodyString(operation, body, field);
+  if (body.action !== "correct" || !/^[a-f0-9]{64}$/.test(body.expectedRevision)) {
+    throw new Error(`${operation} requires action correct and the exact read revision`);
+  }
+  requiredBodyObject(operation, body, "values");
+  rejectExtraKeys(body.values, new Set(bodyMeasurementNumberFields));
+  if (!Object.keys(body.values).length) throw new Error(`${operation}.values must not be empty`);
+  for (const [field, value] of Object.entries(body.values)) {
+    if (value === null && field !== "weightKg") continue;
+    requiredFiniteNumber(operation, body.values, field);
+  }
 }
 
 function rejectConflictingSourceAliases(operation, value) {
@@ -1979,6 +2078,14 @@ function bodyMeasurementEnrichReceipt(data) {
     facts: {},
     replay: responseReplay(value),
   };
+}
+
+function bodyMeasurementUpdateReceipt(data) {
+  const value = responseObject(data);
+  const receipt = bodyMeasurementEnrichReceipt(data);
+  const revision = requiredResponseString(value, [["revision"]], "revision");
+  const correctionId = requiredResponseString(value, [["correctionId"]], "correctionId");
+  return { ...receipt, entityIds: { ...receipt.entityIds, correctionId }, facts: { revision } };
 }
 
 function trainingSelectionReceipt(data) {
@@ -2956,6 +3063,11 @@ function sameExpectedValue(actual, expected) {
   return Object.is(actual, expected);
 }
 
+function workoutCreateFacts({ readbackData }) {
+  const phaseId = workoutReadback(readbackData)?.session.trainingPhaseId ?? null;
+  return { trainingPhaseId: phaseId, cycleLinked: typeof phaseId === "string" && phaseId.length > 0 };
+}
+
 function verifyWorkoutCreate({ body, receipt, readbackData }) {
   const readback = workoutReadback(readbackData);
   if (!verifyReceipt({ body, receipt }) || !readback) return false;
@@ -3107,6 +3219,25 @@ function verifyBodyMeasurementEnrich({ body, receipt, readbackData }) {
       ? sameNormalisedText(bodyMeasurementField(measurement, field), expected)
       : sameExpectedValue(bodyMeasurementField(measurement, field), expected),
   );
+}
+
+function verifyBodyMeasurementUpdate({ body, receipt, readbackData }) {
+  const measurement = bodyMeasurementReadback(readbackData);
+  const container = readbackContainers(readbackData).find((value) => value.revision === receipt.facts.revision);
+  if (
+    !verifyReceipt({ body, receipt }) || !measurement || !container ||
+    measurement.measurementId !== body.measurementId ||
+    container.latestCorrection?.correctionId !== receipt.entityIds.correctionId ||
+    container.latestCorrection?.reason !== body.reason ||
+    receipt.facts.revision === body.expectedRevision
+  ) return false;
+  if (!Object.entries(body.values).every(([field, value]) => sameExpectedValue(measurement[field], value))) return false;
+  const fat = measurement.bodyFatPct;
+  const weight = measurement.weightKg;
+  if (typeof weight !== "number" || (fat !== null && typeof fat !== "number")) return false;
+  const rounded = (value) => Math.round(value * 1000) / 1000;
+  return sameExpectedValue(measurement.fatMassKg, fat === null ? null : rounded(weight * (fat / 100))) &&
+    sameExpectedValue(measurement.estimatedFatFreeMassKg, fat === null ? null : rounded(weight * (1 - fat / 100)));
 }
 
 function readRequest(args) {

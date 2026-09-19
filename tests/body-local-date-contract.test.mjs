@@ -17,8 +17,9 @@ test("body measurements persist a profile-local calendar date on write", async (
   assert.match(route, /getProfileTimezone\(\)/);
   assert.match(route, /localDateFromTimestamp\(payload\.measuredAt, timezone\)/);
   assert.match(route, /measuredAt: payload\.measuredAt,\s+localDate,/s);
+  const createRoute = route.slice(route.indexOf("export async function POST"));
   assert.ok(
-    route.indexOf("if (replayedId)") < route.indexOf("getProfileTimezone()"),
+    createRoute.indexOf("if (replayedId)") < createRoute.indexOf("getProfileTimezone()"),
     "idempotent replay must not re-derive the original calendar date",
   );
 });
