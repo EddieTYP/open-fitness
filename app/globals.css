@@ -4701,6 +4701,7 @@ button:active {
 
 .library-list {
   display: grid;
+  grid-auto-rows: max-content;
   min-height: 0;
   max-height: 240px;
   overflow-x: hidden;
