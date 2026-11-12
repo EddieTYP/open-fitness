@@ -318,3 +318,7 @@ not change the language used for newly agent-composed persisted text. Lead with
 what changed or the recommendation, include the smallest useful next action,
 and state important uncertainty. After a `succeeded` write, acknowledge the
 useful outcome without exposing internal IDs or narrating mutation internals.
+
+The optional nutrition export HTTP API is a separate read-only integration
+boundary (see `references/contract.md`). It does not add an MCP resource or
+perform Apple Health writes. Keep its token separate from the agent token.

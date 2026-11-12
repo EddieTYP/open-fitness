@@ -155,7 +155,7 @@ test("authentication failures keep stable 401 and configuration-error semantics"
 
 test("every assigned authenticated route uses the shared error contract", async () => {
   const routes = await authenticatedRoutes();
-  assert.equal(routes.length, 23, routes.map((route) => route.relativePath).join("\n"));
+  assert.equal(routes.length, 24, routes.map((route) => route.relativePath).join("\n"));
 
   for (const route of routes) {
     const sourceFile = ts.createSourceFile(

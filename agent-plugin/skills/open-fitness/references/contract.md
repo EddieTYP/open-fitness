@@ -601,3 +601,16 @@ resume event.
 The MCP has no training-schedule mutation operation. Pause, resume, and day-off
 changes stay in the Web UI; never approximate them with `session_note_create`,
 `correction_create`, or agent memory.
+
+## Read-only nutrition export
+
+The optional HTTP `GET /api/nutrition/export` is documented in
+`docs/nutrition-export.openapi.json` and `docs/APPLE-HEALTH.md`. Its independent
+export token is confined to that route and cannot replace the agent token for
+MCP reads/writes. The MCP connector does not expose this endpoint as a resource.
+It exports consumed current nonvoid snapshots, all nullable nutrients, item
+metadata and whole-date clear states through profile-local yesterday. Clients
+must retain their previously covered range and rescan it for corrections;
+cursors do not provide an immutable cross-page snapshot. Unknown nutrient
+subtotals and empty dates are not zero intake. This endpoint does not install
+or authorize Apple Health writes or iPhone automations.

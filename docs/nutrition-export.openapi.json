@@ -1,0 +1,599 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Open Fitness nutrition export",
+    "version": "1"
+  },
+  "paths": {
+    "/api/nutrition/export": {
+      "get": {
+        "description": "Read-only current consumed meals, paginated by whole calendar dates. Default earliest stored meal date (including voided) through profile-local yesterday. Includes empty clear states for every selected date. Each page is a coherent read, not a cross-page snapshot. Query keys must be unique; unknown keys rejected. Cursor is exclusive with every other query key. date is exclusive with startDate/endDate, which must be paired. All responses are Cache-Control: no-store.",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "ownerSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "const": "yesterday"
+                }
+              ]
+            },
+            "description": "Completed profile-local date only"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Inclusive; at most profile-local yesterday"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 90,
+              "default": 31
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 2048
+            },
+            "description": "Opaque signed continuation, binds original range, source, timezone and limit"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_NUTRITION_EXPORT_QUERY"
+          },
+          "401": {
+            "description": "AUTHENTICATION_REQUIRED"
+          },
+          "500": {
+            "description": "INTERNAL_ERROR; configuration, profile or read failure (never an empty clear)"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Independent FITNESS_NUTRITION_EXPORT_TOKEN or full FITNESS_API_TOKEN"
+      },
+      "ownerSession": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "edward_fitness_session",
+        "description": "Existing owner session policy; cookie name may be configured"
+      }
+    },
+    "schemas": {
+      "NutrientSummary": {
+        "type": "object",
+        "required": [
+          "knownSum",
+          "knownValueCount",
+          "unknownValueCount",
+          "status"
+        ],
+        "properties": {
+          "knownSum": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "knownValueCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "unknownValueCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "enum": [
+              "unknown",
+              "partial",
+              "complete"
+            ]
+          }
+        },
+        "description": "For each meal use a nonnull authoritative meal total; otherwise use its item values or one unknown if no items. Counts refer to these values, not meals. Empty/all unknown -> null sum, unknown. Partial known subtotal is not a complete daily intake. Zero is a known value. Known sums round to three decimal places, matching stored nutrition calculations."
+      },
+      "Nutrients": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "energyKcal",
+          "proteinG",
+          "totalFatG",
+          "saturatedFatG",
+          "transFatG",
+          "carbsG",
+          "sugarG",
+          "fibreG",
+          "sodiumMg",
+          "cholesterolMg"
+        ],
+        "properties": {
+          "energyKcal": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "proteinG": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "totalFatG": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "saturatedFatG": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "transFatG": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "carbsG": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "sugarG": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "fibreG": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "sodiumMg": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          },
+          "cholesterolMg": {
+            "$ref": "#/components/schemas/NutrientSummary"
+          }
+        }
+      },
+      "Day": {
+        "type": "object",
+        "required": [
+          "id",
+          "fingerprint",
+          "source",
+          "timezone",
+          "localDate",
+          "status",
+          "meals",
+          "nutrients"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable source + calendar date identifier"
+          },
+          "fingerprint": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "SHA256 deterministic current day payload, including timezone; excludes request time"
+          },
+          "source": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "localDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "status": {
+            "enum": [
+              "empty",
+              "recorded"
+            ]
+          },
+          "meals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Meal"
+            }
+          },
+          "nutrients": {
+            "$ref": "#/components/schemas/Nutrients"
+          }
+        }
+      },
+      "Page": {
+        "type": "object",
+        "required": [
+          "contractVersion",
+          "source",
+          "timezone",
+          "startDate",
+          "endDate",
+          "days",
+          "nextCursor"
+        ],
+        "properties": {
+          "contractVersion": {
+            "const": 1
+          },
+          "source": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "days": {
+            "type": "array",
+            "maxItems": 90,
+            "items": {
+              "$ref": "#/components/schemas/Day"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "NutrientValues": {
+        "type": "object",
+        "required": [
+          "energyKcal",
+          "proteinG",
+          "totalFatG",
+          "saturatedFatG",
+          "transFatG",
+          "carbsG",
+          "sugarG",
+          "fibreG",
+          "sodiumMg",
+          "cholesterolMg"
+        ],
+        "properties": {
+          "energyKcal": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "kilocalories"
+          },
+          "proteinG": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "grams"
+          },
+          "totalFatG": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "grams"
+          },
+          "saturatedFatG": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "grams"
+          },
+          "transFatG": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "grams"
+          },
+          "carbsG": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "grams"
+          },
+          "sugarG": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "grams"
+          },
+          "fibreG": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "grams"
+          },
+          "sodiumMg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "milligrams"
+          },
+          "cholesterolMg": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "milligrams"
+          }
+        }
+      },
+      "Meal": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NutrientValues"
+          },
+          {
+            "type": "object",
+            "required": [
+              "mealId",
+              "mealRevisionId",
+              "revisionNo",
+              "localDate",
+              "eatenAt",
+              "timePrecision",
+              "mealType",
+              "contextTag",
+              "originalMealType",
+              "source",
+              "confidence",
+              "createdAt",
+              "updatedAt",
+              "createdBy",
+              "revisionCreatedAt",
+              "revisionCreatedBy",
+              "revisionReason",
+              "originalText",
+              "notes",
+              "items"
+            ],
+            "properties": {
+              "mealId": {
+                "type": "string"
+              },
+              "mealRevisionId": {
+                "type": "string"
+              },
+              "revisionNo": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "localDate": {
+                "type": "string",
+                "format": "date"
+              },
+              "eatenAt": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "timePrecision": {
+                "enum": [
+                  "exact",
+                  "inferred",
+                  "date_only"
+                ]
+              },
+              "mealType": {
+                "enum": [
+                  "breakfast",
+                  "lunch",
+                  "dinner",
+                  "snack",
+                  "late_night",
+                  "other"
+                ]
+              },
+              "contextTag": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "originalMealType": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": "string"
+              },
+              "confidence": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "updatedAt": {
+                "type": "string"
+              },
+              "createdBy": {
+                "type": "string"
+              },
+              "revisionCreatedAt": {
+                "type": "string"
+              },
+              "revisionCreatedBy": {
+                "type": "string"
+              },
+              "revisionReason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "originalText": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MealItem"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "MealItem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NutrientValues"
+          },
+          {
+            "type": "object",
+            "required": [
+              "mealItemId",
+              "mealRevisionId",
+              "itemOrdinal",
+              "foodId",
+              "foodVersionId",
+              "itemNameSnapshot",
+              "quantity",
+              "unit",
+              "assumption",
+              "confidence",
+              "sourceRow",
+              "dataQualityFlags",
+              "createdAt"
+            ],
+            "properties": {
+              "mealItemId": {
+                "type": "string"
+              },
+              "mealRevisionId": {
+                "type": "string"
+              },
+              "itemOrdinal": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "foodId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "foodVersionId": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "itemNameSnapshot": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "unit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "assumption": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "confidence": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ]
+              },
+              "sourceRow": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "dataQualityFlags": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "createdAt": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

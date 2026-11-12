@@ -11,8 +11,21 @@ export {
 
 export type ApiActor = ResolvedApiActor;
 
+export function assertNutritionExportTokenIsolation() {
+  const token = getRuntimeEnvValue("FITNESS_NUTRITION_EXPORT_TOKEN");
+  if (token && [
+    "FITNESS_API_TOKEN",
+    "FITNESS_HEALTH_SYNC_TOKEN",
+    "FITNESS_SESSION_SECRET",
+    "FITNESS_OWNER_PASSWORD_HASH",
+  ].some((key) => token === getRuntimeEnvValue(key))) {
+    throw new Error("Nutrition export token must be independent");
+  }
+}
+
 export async function getApiActor(request: Request): Promise<ApiActor | null> {
   try {
+    assertNutritionExportTokenIsolation();
     const ownerEnvironment = readOwnerAuthEnvironment();
     return resolveApiActor(request, {
       apiToken: getRuntimeEnvValue("FITNESS_API_TOKEN") ?? undefined,
